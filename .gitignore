@@ -1,0 +1,6 @@
+# Trying to ignore the "temporary editor files" created by Emacs,
+# various Office-related tools/programs:
+
+*.~sql
+*~
+~*
