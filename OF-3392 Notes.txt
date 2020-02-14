@@ -1,0 +1,148 @@
+Code sections from LWX_AR_INVO_STMT_PROC pertinent to OF-3392
+
+
+============================================================================================================================
+2331-2335
+        SELECT TRUNC(NVL(MAX(ash.STMT_DTE), v_statement_date_global - 30))
+          INTO v_last_stmt_date_global
+          FROM LWX_AR_STMT_HEADERS ash, HZ_CUST_ACCOUNTS CUST
+         WHERE CUST.CUST_ACCOUNT_ID = v_customer_rec.CUSTOMER_ID
+           AND ash.SEND_TO_CUST_NBR = CUST.ACCOUNT_NUMBER;
+
+============================================================================================================================
+3055-3097
+        -- Jude Lam 05/02/06 Modify the query.
+        -- Arrive Over due Amount (OVR_DUE_AMT)
+        v_process_stage := 'Arrive Over due Amount using stmt_header_id: ' ||
+                           to_char(v_stmt_header_id) ||
+                           ' and v_last_stmt_date_global: ' ||
+                           to_char(v_last_stmt_date_global, 'MM/DD/YYYY');
+
+        --dhoward 19/mar/2008  greater of due_dte and creation_date
+        SELECT NVL(DBT.DEBIT_AMT,0) + NVL(CRE.CREDIT_AMT, 0)
+          INTO v_ovr_due_amt
+          FROM (-- Debit Amount Table
+                SELECT SUM(NVL(sl.OUTSTND_AMT, 0)) DEBIT_AMT
+                  FROM LWX_AR_STMT_LINES   SL,
+                       RA_CUSTOMER_TRX_ALL TRX
+                 WHERE STMT_HDR_ID = v_stmt_header_id 
+                   AND REC_TYPE_CDE = 'F3' 
+                   AND OUTSTND_AMT >= 0 
+                   AND SL.CUSTOMER_TRX_ID = TRX.CUSTOMER_TRX_ID(+) 
+                   AND TRUNC(GREATEST(SL.DUE_DTE, NVL(TRX.CREATION_DATE, SL.DUE_DTE))) 
+                              < TRUNC(v_last_stmt_date_global)
+                   AND (CASE trx.attribute5
+                          WHEN 'ET' THEN lwx_ar_query.get_wo_gift_card_receipt(sl.PAYMENT_SCHEDULE_ID)
+                          WHEN 'WO' THEN lwx_ar_query.get_wo_gift_card_receipt(sl.PAYMENT_SCHEDULE_ID)
+                          WHEN 'FC' THEN lwx_ar_query.get_wo_gift_card_receipt(sl.PAYMENT_SCHEDULE_ID)                            
+                          ELSE NULL  
+                        END) IS NULL
+                   -- Prepay items should not be considered overdue until has appeared in F3 section before
+                   AND (get_prepay(SL.PAYMENT_SCHEDULE_ID,'N','Y') IS NULL
+                        OR 
+                        EXISTS (SELECT 1 
+                                FROM LWX_AR_STMT_LINES SL2
+                                WHERE SL2.STMT_HDR_ID <> v_stmt_header_id
+                                AND SL2.REC_TYPE_CDE = 'F3'
+                                AND SL2.CUSTOMER_TRX_ID = SL.CUSTOMER_TRX_ID)
+                       )
+                ) DBT,
+               (-- Credit Amount Table 
+                SELECT NVL(SUM(NVL(LASL2.OUTSTND_AMT, 0)), 0) CREDIT_AMT
+               	  FROM LWX_AR_STMT_LINES LASL2
+                 WHERE STMT_HDR_ID = v_stmt_header_id AND
+            	       REC_TYPE_CDE = 'F3' AND
+        	           OUTSTND_AMT < 0 
+                ) CRE;
+============================================================================================================================
+3109-3136
+        -- Arrive Current Transaction (DUE_AMT)
+        v_process_stage := 'Arrive Current F3 Transaction Due Amount using stmt_header_id: ' ||
+                           to_char(v_stmt_header_id);
+
+        -- Jude Lam 05/02/06 Modify the query.
+
+        SELECT NVL(SUM(nvl(LASL.OUTSTND_AMT, 0)), 0)
+          INTO v_due_amt
+          FROM  LWX_AR_STMT_LINES LASL
+               ,ra_customer_trx_all trx  --dhoward added 03-28-2008
+         WHERE LASL.STMT_HDR_ID = v_stmt_header_id
+           AND LASL.REC_TYPE_CDE = 'F3'
+           --dhoward Greater Date requirement added 03-28-2008
+	       AND LASL.customer_trx_id = trx.customer_trx_id (+)
+         AND OUTSTND_AMT >= 0 -- Jude Lam 09/21/06 Added this because all credit items are included in over due amt section.
+         AND ((--Non Prepay items use regular date logic
+                 get_prepay(LASL.PAYMENT_SCHEDULE_ID,'N','Y') IS NULL
+         AND greatest(trunc(LASL.due_dte),nvl(trunc(trx.creation_date),trunc(LASL.due_dte))) 
+                     BETWEEN TRUNC(v_last_stmt_date_global) AND v_statement_date_global)
+                OR 
+                (-- Prepay items should be consider due on first move into F3 section
+                 get_prepay(LASL.PAYMENT_SCHEDULE_ID,'N','Y') = LASL.PAYMENT_SCHEDULE_ID
+                 AND NOT EXISTS (SELECT 1 
+                        FROM LWX_AR_STMT_LINES SL2
+                        WHERE SL2.STMT_HDR_ID <> v_stmt_header_id
+                        AND SL2.REC_TYPE_CDE = 'F3'
+                        AND SL2.CUSTOMER_TRX_ID = LASL.CUSTOMER_TRX_ID))
+               );
+============================================================================================================================
+3157-3172
+        -- Jude Lam 05/02/06 Modify the query.
+        SELECT NVL((dbt.DBT_AMT + cre.CRE_AMT), 0)
+          INTO v_to_pay_amt
+          FROM (SELECT nvl(SUM(nvl(LASL1.OUTSTND_AMT, 0)), 0) DBT_AMT
+                  FROM LWX_AR_STMT_LINES LASL1
+                 WHERE STMT_HDR_ID = v_stmt_header_id
+                   AND REC_TYPE_CDE = 'F3'
+                   AND OUTSTND_AMT >= 0
+                   AND DUE_DTE <= v_statement_date_global
+                ) dbt,
+               (SELECT nvl(SUM(nvl(LASL2.OUTSTND_AMT, 0)), 0) CRE_AMT
+                  FROM LWX_AR_STMT_LINES LASL2
+                 WHERE STMT_HDR_ID = v_stmt_header_id
+                   AND REC_TYPE_CDE = 'F3'
+                   AND OUTSTND_AMT < 0
+                ) cre;
+
+============================================================================================================================
+3193-3206
+        -- Arrive Not Due Amount (NOT_DUE_AMT)
+        v_process_stage := 'Derive F3 No Due Amount using v_stmt_header_id: ' ||
+                           to_char(v_stmt_header_id) ||
+                           ' and v_statement_date_global: ' ||
+                           to_char(v_statement_date_global,
+                                   'MM/DD/YYYY HH24:MI:SS');
+
+        SELECT NVL(SUM(nvl(OUTSTND_AMT, 0)), 0)
+          INTO v_no_due_amt
+          FROM LWX_AR_STMT_LINES
+         WHERE STMT_HDR_ID = v_stmt_header_id
+           AND REC_TYPE_CDE = 'F3'
+           AND TOTAL_DUE_AMT >= 0
+           AND DUE_DTE > v_statement_date_global;
+
+============================================================================================================================
+3647-3653
+    -- Get the current statement indicator
+    IF nvl(trunc(v_due_dte), trunc(v_trans_dte)) <= v_statement_date_global THEN
+      v_incl_cur_stmt_ind := 'Y';
+    ELSE
+      v_incl_cur_stmt_ind := 'N';
+    END IF;
+
+
+
+============================================================================================================================
+3960-3967
+    -- Get the current statement indicator
+    v_process_stage := 'Get the Current Statement Indicator';
+
+    IF nvl(trunc(v_due_dte), trunc(v_trans_dte)) <= v_statement_date_global THEN
+      v_incl_cur_stmt_ind := 'Y';
+    ELSE
+      v_incl_cur_stmt_ind := 'N';
+    END IF;
+
+
+============================================================================================================================
+
+
