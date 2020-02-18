@@ -2327,13 +2327,13 @@ FUNCTION get_invoice_xml
       log('d',v_process_stage);
 
       BEGIN
---due-date-adjust 2331-2335
+
         SELECT TRUNC(NVL(MAX(ash.STMT_DTE), v_statement_date_global - 30))
           INTO v_last_stmt_date_global
           FROM LWX_AR_STMT_HEADERS ash, HZ_CUST_ACCOUNTS CUST
          WHERE CUST.CUST_ACCOUNT_ID = v_customer_rec.CUSTOMER_ID
            AND ash.SEND_TO_CUST_NBR = CUST.ACCOUNT_NUMBER;
---due-date-adjust end
+
       EXCEPTION
         WHEN NO_DATA_FOUND THEN
           v_last_stmt_date_global := NVL(v_statement_date_global, SYSDATE) - 30;
@@ -3072,7 +3072,7 @@ FUNCTION get_invoice_xml
         -- modifed after duplex printing was lost for stmt detail
         v_total_page_cnt := v_ppd_page_cnt + v_dtl_page_cnt +
                             v_invo_page_cnt + 1;
--- due-date-adjust 3055-3097
+
         -- Jude Lam 05/02/06 Modify the query.
         -- Arrive Over due Amount (OVR_DUE_AMT)
         v_process_stage := 'Arrive Over due Amount using stmt_header_id: ' ||
@@ -3116,7 +3116,7 @@ FUNCTION get_invoice_xml
             	       REC_TYPE_CDE = 'F3' AND
         	           OUTSTND_AMT < 0 
                 ) CRE;
--- due-date-adjust end
+
         log('d','Over due Amount ' ||
                   to_char(v_ovr_due_amt, '999,999,999,990.00'));
 
@@ -3126,7 +3126,7 @@ FUNCTION get_invoice_xml
         ELSE
           v_actual_ovr_due_amt := v_ovr_due_amt;
         END IF;
--- due-date-adjust 3109-3136
+
         -- Arrive Current Transaction (DUE_AMT)
         v_process_stage := 'Arrive Current F3 Transaction Due Amount using stmt_header_id: ' ||
                            to_char(v_stmt_header_id);
@@ -3155,7 +3155,7 @@ FUNCTION get_invoice_xml
                         AND SL2.REC_TYPE_CDE = 'F3'
                         AND SL2.CUSTOMER_TRX_ID = LASL.CUSTOMER_TRX_ID))
                );
--- due-date-adjust end
+
         log('d','Transaction Due Amount ' ||
                   to_char(v_due_amt, '999,999,999,990.00'));
 
@@ -3174,7 +3174,7 @@ FUNCTION get_invoice_xml
                            ' and v_statement_date_global: ' ||
                            to_char(v_statement_date_global,
                                    'MM/DD/YYYY HH24:MI:SS');
--- due-date-adjust 3157-3172
+
         -- Jude Lam 05/02/06 Modify the query.
         SELECT NVL((dbt.DBT_AMT + cre.CRE_AMT), 0)
           INTO v_to_pay_amt
@@ -3191,7 +3191,7 @@ FUNCTION get_invoice_xml
                    AND REC_TYPE_CDE = 'F3'
                    AND OUTSTND_AMT < 0
                 ) cre;
--- due-date-adjust end
+
         log('d','Payment Amount ' ||
                   to_char(v_to_pay_amt, '999,999,999,990.00'));
 
@@ -3211,7 +3211,7 @@ FUNCTION get_invoice_xml
         v_scan_line_nme := Lwx_Stmt_Scanned_Line_Logic(v_customer_rec.CUSTOMER_NUMBER,
                                                        v_to_pay_amt_ocr,
                                                        retcode);
-        -- Arrive Not Due Amount (NOT_DUE_AMT)  -- due-date-adjust 3193-3206
+        -- Arrive Not Due Amount (NOT_DUE_AMT)
         v_process_stage := 'Derive F3 No Due Amount using v_stmt_header_id: ' ||
                            to_char(v_stmt_header_id) ||
                            ' and v_statement_date_global: ' ||
@@ -3225,7 +3225,7 @@ FUNCTION get_invoice_xml
            AND REC_TYPE_CDE = 'F3'
            AND TOTAL_DUE_AMT >= 0
            AND (DUE_DTE + v_due_date_adjustment) > v_statement_date_global;
--- due-date-adjust end
+
         log('d','No Due Amount ' ||
                   to_char(v_no_due_amt, '999,999,999,990.00'));
 
@@ -3664,14 +3664,14 @@ FUNCTION get_invoice_xml
               ' Mkt Message2 Name ' || v_mkt_msg2_nme ||
               ' Mkt Message3 Name ' || v_mkt_msg3_nme ||
               ' Mkt Message4 Name ' || v_mkt_msg4_nme);
--- due-date-adjust 3647-3653
+
     -- Get the current statement indicator
     IF (nvl(trunc(v_due_dte), trunc(v_trans_dte)) + v_due_date_adjustment) <= v_statement_date_global THEN
       v_incl_cur_stmt_ind := 'Y';
     ELSE
       v_incl_cur_stmt_ind := 'N';
     END IF;
--- due-date-adjust end
+
     -- Jude Lam 06/07/06 Added the retrieval of COMMENTS into this variable if the class is payment.
     IF p_openitem_cur_rec.class = 'PMT' THEN
 
@@ -3977,7 +3977,7 @@ FUNCTION get_invoice_xml
               ' Mkt Message2 Name ' || v_mkt_msg2_nme ||
               ' Mkt Message3 Name ' || v_mkt_msg3_nme ||
               ' Mkt Message4 Name ' || v_mkt_msg4_nme);
--- due-date-adjust 3960-3967
+
     -- Get the current statement indicator
     v_process_stage := 'Get the Current Statement Indicator';
 
@@ -3986,7 +3986,7 @@ FUNCTION get_invoice_xml
     ELSE
       v_incl_cur_stmt_ind := 'N';
     END IF;
--- due-date-adjust end
+
     -- Jude Lam 06/07/06 Added the retrieval of COMMENTS into this variable if the class is payment.
     IF p_openitem_cur_rec.class = 'PMT' THEN
 
