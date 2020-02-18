@@ -523,7 +523,9 @@ CREATE OR REPLACE PACKAGE BODY lwx_ar_invo_stmt_print AS
   ---  Development and Maintenance History:
   ---  ------------------------------------
   ---  DATE              AUTHOR                      DESCRIPTION 
-  ---  ----------        ------------------------    ----------------------------------------------------------- 
+  ---  ----------        ------------------------    -----------------------------------------------------------
+  ---  2020-02-18        Rich Stewart                OF-3393 changes to take addresses with missing geocodes into account
+  ---                                                and avoid causing the consuming program to generate unnecessary warnings.
   ---  2009-11-18        Jason McCleskey             Initial Creation - Streamline Site Logic and improve readability
   --- ***************************************************************************************************************
   PROCEDURE get_site_info(pn_cust_id                NUMBER,
@@ -539,7 +541,10 @@ CREATE OR REPLACE PACKAGE BODY lwx_ar_invo_stmt_print AS
                           pv_country            OUT FND_TERRITORIES_VL.TERRITORY_SHORT_NAME%TYPE,
                           pn_cust_acct_site_id  OUT NUMBER
                           ) IS
-
+    -- OF-3393 used herein to indicate whether or not querying detects missing
+    -- geocode data
+    l_good_geocode number;
+    --
     CURSOR cur_sites (cn_cust_id   NUMBER, 
                       cn_party_id  NUMBER) IS
     SELECT loc.ADDRESS1,
@@ -549,7 +554,9 @@ CREATE OR REPLACE PACKAGE BODY lwx_ar_invo_stmt_print AS
            loc.CITY,
            substr(loc.STATE,1,2),
            substr(loc.POSTAL_CODE,1,12),
-           terr.TERRITORY_SHORT_NAME
+           terr.TERRITORY_SHORT_NAME,
+           --
+           nvl(loc_assign.location_id,0) good_geocode
       FROM AR_LOOKUPS         l_cat,
            FND_TERRITORIES_VL terr,
            FND_LANGUAGES_VL   lang,
@@ -567,7 +574,7 @@ CREATE OR REPLACE PACKAGE BODY lwx_ar_invo_stmt_print AS
        AND csu.SITE_USE_CODE IN ('STMTS','BILL_TO')
        AND NVL(csu.PRIMARY_FLAG, 'N') = 'Y'
        AND loc.LOCATION_ID = party_site.LOCATION_ID
-       AND loc_assign.LOCATION_ID = loc.LOCATION_ID
+       AND loc.LOCATION_ID = loc_assign.LOCATION_ID(+) -- n.b. this is an "optional join" OF-3393
        AND addr.cust_account_id = cn_cust_id
        AND party_site.PARTY_ID = cn_party_id
        ORDER BY decode(csu.site_use_code,'STMTS',1,'BILL_TO',2,3);
@@ -584,7 +591,9 @@ CREATE OR REPLACE PACKAGE BODY lwx_ar_invo_stmt_print AS
                          pv_city,
                          pv_state,
                          pv_postal_code,
-                         pv_country;
+                         pv_country,
+                         --
+                         l_good_geocode;
     IF cur_sites%NOTFOUND THEN
        log('l', '*** Warning: Primary Bill_To Site Address not found');
        pb_good_site := FALSE;
@@ -607,6 +616,10 @@ CREATE OR REPLACE PACKAGE BODY lwx_ar_invo_stmt_print AS
     IF length(pv_postal_code) > 12 THEN
       pb_good_site := FALSE;
       log('l', '*** Warning: Length of postal_code exceeds 12 characters');
+    END IF;
+
+    IF l_good_geocode = 0 THEN
+      log('l', '*** Warning: missing geocode data');
     END IF;
     
     IF (pb_good_site) THEN 
