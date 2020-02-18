@@ -1,4 +1,3 @@
--- -*- indent-tabs-mode: nil tab-width: 4 -*-
 CREATE OR REPLACE PACKAGE BODY lwx_ar_invo_stmt_print AS
   --- ***************************************************************************************************************
   ---$Id: LWX_AR_INVO_STMT_PRINT_PKB.sql,v 1.117 2019/01/25 23:19:02 gwright Exp $
@@ -2328,13 +2327,13 @@ FUNCTION get_invoice_xml
       log('d',v_process_stage);
 
       BEGIN
-
+--due-date-adjust 2331-2335
         SELECT TRUNC(NVL(MAX(ash.STMT_DTE), v_statement_date_global - 30))
           INTO v_last_stmt_date_global
           FROM LWX_AR_STMT_HEADERS ash, HZ_CUST_ACCOUNTS CUST
          WHERE CUST.CUST_ACCOUNT_ID = v_customer_rec.CUSTOMER_ID
            AND ash.SEND_TO_CUST_NBR = CUST.ACCOUNT_NUMBER;
-
+--due-date-adjust end
       EXCEPTION
         WHEN NO_DATA_FOUND THEN
           v_last_stmt_date_global := NVL(v_statement_date_global, SYSDATE) - 30;
@@ -2348,6 +2347,27 @@ FUNCTION get_invoice_xml
       -- Jude Lam 03/06/06
       log('d','Last Statement Date Determined: ' ||
                 TO_CHAR(v_last_stmt_date_global, 'DD-MON-YYYY'));
+
+      -- Calculation of the due-date adjustment:
+      declare
+        date_distance_adjusted number := 0;
+      begin
+        date_distance_adjusted :=
+          v_statement_date_global - (v_last_stmt_date_global + 30);
+        --
+        -- Effectively, if the "current statement date" and the "last statement date"
+        -- are between 30 and 40 days apart, then we want to adjust the line item
+        -- due date by the amount for which the difference between the dates exceeds
+        -- 30 days.  And otherwise, the due-date should not be adjusted at all, i.e.,
+        -- the adjustment must be 0.
+        if     0 <= date_distance_adjusted
+           and      date_distance_adjusted <= 10
+        then
+          v_due_date_adjustment := date_distance_adjusted;
+        else
+          v_due_date_adjustment := 0;
+        end if;
+      end;
 
       -- Calculate the current open balance for the customer
       v_process_stage := 'Get the Current Open Balance for the Customer Id: ' ||
@@ -3052,7 +3072,7 @@ FUNCTION get_invoice_xml
         -- modifed after duplex printing was lost for stmt detail
         v_total_page_cnt := v_ppd_page_cnt + v_dtl_page_cnt +
                             v_invo_page_cnt + 1;
-
+-- due-date-adjust 3055-3097
         -- Jude Lam 05/02/06 Modify the query.
         -- Arrive Over due Amount (OVR_DUE_AMT)
         v_process_stage := 'Arrive Over due Amount using stmt_header_id: ' ||
@@ -3071,10 +3091,8 @@ FUNCTION get_invoice_xml
                    AND REC_TYPE_CDE = 'F3' 
                    AND OUTSTND_AMT >= 0 
                    AND SL.CUSTOMER_TRX_ID = TRX.CUSTOMER_TRX_ID(+) 
--- THIS IS THE PREDICATE WHICH MR. WRIGHT SAYS OUGTTA CHANGE, EH?
-                   AND TRUNC(GREATEST(SL.DUE_DTE, NVL(TRX.CREATION_DATE, SL.DUE_DTE))) 
+                   AND (TRUNC(GREATEST(SL.DUE_DTE, NVL(TRX.CREATION_DATE, SL.DUE_DTE))) + v_due_date_adjustment)
                               < TRUNC(v_last_stmt_date_global)
---
                    AND (CASE trx.attribute5
                           WHEN 'ET' THEN lwx_ar_query.get_wo_gift_card_receipt(sl.PAYMENT_SCHEDULE_ID)
                           WHEN 'WO' THEN lwx_ar_query.get_wo_gift_card_receipt(sl.PAYMENT_SCHEDULE_ID)
@@ -3098,7 +3116,7 @@ FUNCTION get_invoice_xml
             	       REC_TYPE_CDE = 'F3' AND
         	           OUTSTND_AMT < 0 
                 ) CRE;
-
+-- due-date-adjust end
         log('d','Over due Amount ' ||
                   to_char(v_ovr_due_amt, '999,999,999,990.00'));
 
@@ -3108,7 +3126,7 @@ FUNCTION get_invoice_xml
         ELSE
           v_actual_ovr_due_amt := v_ovr_due_amt;
         END IF;
-
+-- due-date-adjust 3109-3136
         -- Arrive Current Transaction (DUE_AMT)
         v_process_stage := 'Arrive Current F3 Transaction Due Amount using stmt_header_id: ' ||
                            to_char(v_stmt_header_id);
@@ -3126,7 +3144,7 @@ FUNCTION get_invoice_xml
          AND OUTSTND_AMT >= 0 -- Jude Lam 09/21/06 Added this because all credit items are included in over due amt section.
          AND ((--Non Prepay items use regular date logic
                  get_prepay(LASL.PAYMENT_SCHEDULE_ID,'N','Y') IS NULL
-         AND greatest(trunc(LASL.due_dte),nvl(trunc(trx.creation_date),trunc(LASL.due_dte))) 
+         AND (greatest(trunc(LASL.due_dte),nvl(trunc(trx.creation_date),trunc(LASL.due_dte))) + v_due_date_adjustment)
                      BETWEEN TRUNC(v_last_stmt_date_global) AND v_statement_date_global)
                 OR 
                 (-- Prepay items should be consider due on first move into F3 section
@@ -3137,7 +3155,7 @@ FUNCTION get_invoice_xml
                         AND SL2.REC_TYPE_CDE = 'F3'
                         AND SL2.CUSTOMER_TRX_ID = LASL.CUSTOMER_TRX_ID))
                );
-
+-- due-date-adjust end
         log('d','Transaction Due Amount ' ||
                   to_char(v_due_amt, '999,999,999,990.00'));
 
@@ -3156,7 +3174,7 @@ FUNCTION get_invoice_xml
                            ' and v_statement_date_global: ' ||
                            to_char(v_statement_date_global,
                                    'MM/DD/YYYY HH24:MI:SS');
-
+-- due-date-adjust 3157-3172
         -- Jude Lam 05/02/06 Modify the query.
         SELECT NVL((dbt.DBT_AMT + cre.CRE_AMT), 0)
           INTO v_to_pay_amt
@@ -3165,7 +3183,7 @@ FUNCTION get_invoice_xml
                  WHERE STMT_HDR_ID = v_stmt_header_id
                    AND REC_TYPE_CDE = 'F3'
                    AND OUTSTND_AMT >= 0
-                   AND DUE_DTE <= v_statement_date_global
+                   AND (DUE_DTE + v_due_date_adjustment) <= v_statement_date_global
                 ) dbt,
                (SELECT nvl(SUM(nvl(LASL2.OUTSTND_AMT, 0)), 0) CRE_AMT
                   FROM LWX_AR_STMT_LINES LASL2
@@ -3173,7 +3191,7 @@ FUNCTION get_invoice_xml
                    AND REC_TYPE_CDE = 'F3'
                    AND OUTSTND_AMT < 0
                 ) cre;
-
+-- due-date-adjust end
         log('d','Payment Amount ' ||
                   to_char(v_to_pay_amt, '999,999,999,990.00'));
 
@@ -3193,7 +3211,7 @@ FUNCTION get_invoice_xml
         v_scan_line_nme := Lwx_Stmt_Scanned_Line_Logic(v_customer_rec.CUSTOMER_NUMBER,
                                                        v_to_pay_amt_ocr,
                                                        retcode);
-        -- Arrive Not Due Amount (NOT_DUE_AMT)
+        -- Arrive Not Due Amount (NOT_DUE_AMT)  -- due-date-adjust 3193-3206
         v_process_stage := 'Derive F3 No Due Amount using v_stmt_header_id: ' ||
                            to_char(v_stmt_header_id) ||
                            ' and v_statement_date_global: ' ||
@@ -3206,8 +3224,8 @@ FUNCTION get_invoice_xml
          WHERE STMT_HDR_ID = v_stmt_header_id
            AND REC_TYPE_CDE = 'F3'
            AND TOTAL_DUE_AMT >= 0
-           AND DUE_DTE > v_statement_date_global;
-
+           AND (DUE_DTE + v_due_date_adjustment) > v_statement_date_global;
+-- due-date-adjust end
         log('d','No Due Amount ' ||
                   to_char(v_no_due_amt, '999,999,999,990.00'));
 
@@ -3646,14 +3664,14 @@ FUNCTION get_invoice_xml
               ' Mkt Message2 Name ' || v_mkt_msg2_nme ||
               ' Mkt Message3 Name ' || v_mkt_msg3_nme ||
               ' Mkt Message4 Name ' || v_mkt_msg4_nme);
-
+-- due-date-adjust 3647-3653
     -- Get the current statement indicator
-    IF nvl(trunc(v_due_dte), trunc(v_trans_dte)) <= v_statement_date_global THEN
+    IF (nvl(trunc(v_due_dte), trunc(v_trans_dte)) + v_due_date_adjustment) <= v_statement_date_global THEN
       v_incl_cur_stmt_ind := 'Y';
     ELSE
       v_incl_cur_stmt_ind := 'N';
     END IF;
-
+-- due-date-adjust end
     -- Jude Lam 06/07/06 Added the retrieval of COMMENTS into this variable if the class is payment.
     IF p_openitem_cur_rec.class = 'PMT' THEN
 
@@ -3959,16 +3977,16 @@ FUNCTION get_invoice_xml
               ' Mkt Message2 Name ' || v_mkt_msg2_nme ||
               ' Mkt Message3 Name ' || v_mkt_msg3_nme ||
               ' Mkt Message4 Name ' || v_mkt_msg4_nme);
-
+-- due-date-adjust 3960-3967
     -- Get the current statement indicator
     v_process_stage := 'Get the Current Statement Indicator';
 
-    IF nvl(trunc(v_due_dte), trunc(v_trans_dte)) <= v_statement_date_global THEN
+    IF (nvl(trunc(v_due_dte), trunc(v_trans_dte)) + v_due_date_adjustment) <= v_statement_date_global THEN
       v_incl_cur_stmt_ind := 'Y';
     ELSE
       v_incl_cur_stmt_ind := 'N';
     END IF;
-
+-- due-date-adjust end
     -- Jude Lam 06/07/06 Added the retrieval of COMMENTS into this variable if the class is payment.
     IF p_openitem_cur_rec.class = 'PMT' THEN
 
@@ -9533,3 +9551,10 @@ FUNCTION get_invoice_xml
 
 END lwx_ar_invo_stmt_print;
 /
+
+/*
+Local Variables:
+indent-tabs-mode: nil
+tab-width: 4
+End:
+*/

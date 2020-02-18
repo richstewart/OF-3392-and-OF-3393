@@ -83,6 +83,10 @@ CREATE OR REPLACE PACKAGE LWX_AR_INVO_STMT_PRINT AS
    v_statement_date_global	AR_STATEMENT_CYCLE_DATES.STATEMENT_DATE%TYPE;
    g_debug_mode             VARCHAR2(1);
 
+   -- OF-3392 more global state needed in order to control adjustment
+   -- to the due-date:
+   v_due_date_adjustment number := 0;  -- default to 0
+
    -- Single Invoice XML Global Values
    v_xml_inv_element            clob;
    v_xml_inv_body               clob;
