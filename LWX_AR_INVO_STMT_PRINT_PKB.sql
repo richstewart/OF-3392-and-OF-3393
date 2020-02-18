@@ -267,6 +267,8 @@ CREATE OR REPLACE PACKAGE BODY lwx_ar_invo_stmt_print AS
   ---                                            they need an indicator for foreign statement addresses.
   --- 2018-07-24   Greg Wright         OF-3086 - Accomodate Multiple party sites with same location ID.
   --- 2019-01-25   Greg Wright         OF-3186 expect two programs for each BPA call instead of three.
+  --- 2020-02-18   Rich Stewart        OF-3392 Changes to due-date handling, affecting procedure Generate_Con_Stmt
+  ---                                  and procedure Lwx_Ar_Build_F3_Type_Rec.
   --- ***************************************************************************************************************
 
   gn_freight_item  NUMBER := TO_NUMBER(lwx_fnd_query.get_sys_param_value('OE_INVENTORY_ITEM_FOR_FREIGHT'));
