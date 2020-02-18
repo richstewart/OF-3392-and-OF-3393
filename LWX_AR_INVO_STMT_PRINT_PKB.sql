@@ -1865,7 +1865,18 @@ FUNCTION get_invoice_xml
     ---                                           Also changes for performance, proceduralized and readability
     ---  2010-02-24   Jason McCleskey          P-1725 - Do not consolidate Prospect Services (Lexinet) invoices (Sales Channel = 'PS')    
     ---  2012-01-13   Greg Wright              Prevents consolidation of invoices when language='Es'.
-    ---  2017-08-15   Greg Wright              OF-2899 Flash Commerce    
+    ---  2017-08-15   Greg Wright              OF-2899 Flash Commerce
+    ---  2020-02-18   Rich Stewart             OF-3392 Change use of due dates in statement generation:
+    ---                                        delay the due date of payments by the amount by which the difference
+    ---                                        between the statement date and preceding/last statement date exceeds 30
+    ---                                        days.  I.e., when the statement date and preceding/last statement date
+    ---                                        are between 30 and 40 days apart, then delay the due date by the amount
+    ---                                          "statement date" - ("preceding/last statement date" + "30 days")
+    ---                                        This delay/adjustment amount is added to the line-item due-date when
+    ---                                        comparing it to the "statement date" wherever the program is choosing line-item
+    ---                                        amounts to add to the "overdue amount."
+    ---                                        This v_due_date_adjustment is a package-level global variable calculated
+    ---                                        here.
     --- ***************************************************************************************************************
 
     -- Local varibles declaration
@@ -3881,6 +3892,9 @@ FUNCTION get_invoice_xml
     ---                                         Modified to call get_line_amounts instead of duplicated 
     ---                                           code in F2 and F3
     ---                                         Put Doc Type Name in open item cursor instead of requerying
+    ---  2020-02-18   Rich Stewart             OF-3392 Changes use of due dates:
+    ---                                        The v_due_date_adjustment package-level global is used
+    ---                                        to "delay" the due-dates herein.
     --- ***************************************************************************************************************
 
     -- Local varibles declaration
@@ -9551,10 +9565,3 @@ FUNCTION get_invoice_xml
 
 END lwx_ar_invo_stmt_print;
 /
-
-/*
-Local Variables:
-indent-tabs-mode: nil
-tab-width: 4
-End:
-*/
