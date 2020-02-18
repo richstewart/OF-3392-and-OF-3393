@@ -267,6 +267,9 @@ CREATE OR REPLACE PACKAGE BODY lwx_ar_invo_stmt_print AS
   ---                                            they need an indicator for foreign statement addresses.
   --- 2018-07-24   Greg Wright         OF-3086 - Accomodate Multiple party sites with same location ID.
   --- 2019-01-25   Greg Wright         OF-3186 expect two programs for each BPA call instead of three.
+  --- 2020-02-18   Rich Stewart        OF-3393 changes to take addresses with missing geocodes into account
+  ---                                          within the get_site_info procedure, called from the Generate_Con_Stmt,
+  ---                                          and avoid causing the Generate_Con_Stmt to generate unnecessary warnings.
   --- ***************************************************************************************************************
 
   gn_freight_item  NUMBER := TO_NUMBER(lwx_fnd_query.get_sys_param_value('OE_INVENTORY_ITEM_FOR_FREIGHT'));
@@ -524,9 +527,9 @@ CREATE OR REPLACE PACKAGE BODY lwx_ar_invo_stmt_print AS
   ---  ------------------------------------
   ---  DATE              AUTHOR                      DESCRIPTION 
   ---  ----------        ------------------------    -----------------------------------------------------------
+  ---  2009-11-18        Jason McCleskey             Initial Creation - Streamline Site Logic and improve readability
   ---  2020-02-18        Rich Stewart                OF-3393 changes to take addresses with missing geocodes into account
   ---                                                and avoid causing the consuming program to generate unnecessary warnings.
-  ---  2009-11-18        Jason McCleskey             Initial Creation - Streamline Site Logic and improve readability
   --- ***************************************************************************************************************
   PROCEDURE get_site_info(pn_cust_id                NUMBER,
                           pn_party_id               NUMBER,
