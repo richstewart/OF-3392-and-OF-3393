@@ -1,0 +1,5 @@
+OOPS!  Original commit message got the purposes of the two changes
+reversed!  Here is the correct information:
+  OF-3392 has to do with "due-date adjustment when last preceding statement
+          and present statement are between 30 and 40 days apart."
+  OF-3393 deals with "allowing statement generation even when geocode is lacking."
