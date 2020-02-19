@@ -1,4 +1,3 @@
--- -*- indent-tabs-mode: nil tab-width: 4 -*-
 CREATE OR REPLACE PACKAGE LWX_AR_INVO_STMT_PRINT AS
 
 --- ***************************************************************************************************************
