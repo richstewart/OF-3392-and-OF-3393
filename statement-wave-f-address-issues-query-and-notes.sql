@@ -52,6 +52,9 @@ JARGON...
 
 I looked at the lwx_fnd_query package, and it appears to be chokablok
 with precisely that sort of functionality.  deep-breath!
+
+It doesn't appear to make a difference when actually running
+the queries, however.  Maybe it makes a difference in other regards?
 */
 
 /*
@@ -59,6 +62,12 @@ begin
 lwx_fnd_query.set_org(102);
 end;
 */
+
+/* 
+I squished the two queries together, rather than trying to run them
+separately and trying to make out the separated party_id and cust_account_id.
+*/
+
     SELECT loc.ADDRESS1,
            loc.ADDRESS2,
            loc.ADDRESS3,
@@ -75,6 +84,9 @@ end;
            ar.HZ_CUST_SITE_USES_all  csu,
            ar.HZ_LOCATIONS       loc,
            apps.HZ_LOC_ASSIGNMENTS loc_assign
+           --
+           ,
+           ar.hz_cust_accounts ca
      WHERE addr.CUSTOMER_CATEGORY_CODE = l_cat.LOOKUP_CODE(+)
        AND l_cat.LOOKUP_TYPE(+) = 'ADDRESS_CATEGORY'
        AND loc.COUNTRY = terr.TERRITORY_CODE(+)
@@ -85,6 +97,7 @@ end;
        AND NVL(csu.PRIMARY_FLAG, 'N') = 'Y'
        AND loc.LOCATION_ID = party_site.LOCATION_ID
        AND loc_assign.LOCATION_ID (+) = loc.LOCATION_ID --- Here is where I made hz_loc_assignments optional
-       AND addr.cust_account_id = 694237 -- cn_cust_id for account 2000049678
-       AND party_site.PARTY_ID = 730058 -- cn_party_id
+       AND addr.cust_account_id = ca.cust_account_id -- 694237 -- cn_cust_id for account 2000049678
+       AND party_site.PARTY_ID = ca.party_id -- 730058 -- cn_party_id
+       and ca.account_number = '2000049678'
        ORDER BY decode(csu.site_use_code,'STMTS',1,'BILL_TO',2,3);
