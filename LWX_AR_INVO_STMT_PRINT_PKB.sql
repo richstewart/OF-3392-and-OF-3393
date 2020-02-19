@@ -1,4 +1,3 @@
--- -*- indent-tabs-mode: nil tab-width: 4 -*-
 CREATE OR REPLACE PACKAGE BODY lwx_ar_invo_stmt_print AS
   --- ***************************************************************************************************************
   ---$Id: LWX_AR_INVO_STMT_PRINT_PKB.sql,v 1.117 2019/01/25 23:19:02 gwright Exp $
@@ -3071,10 +3070,8 @@ FUNCTION get_invoice_xml
                    AND REC_TYPE_CDE = 'F3' 
                    AND OUTSTND_AMT >= 0 
                    AND SL.CUSTOMER_TRX_ID = TRX.CUSTOMER_TRX_ID(+) 
--- THIS IS THE PREDICATE WHICH MR. WRIGHT SAYS OUGTTA CHANGE, EH?
                    AND TRUNC(GREATEST(SL.DUE_DTE, NVL(TRX.CREATION_DATE, SL.DUE_DTE))) 
                               < TRUNC(v_last_stmt_date_global)
---
                    AND (CASE trx.attribute5
                           WHEN 'ET' THEN lwx_ar_query.get_wo_gift_card_receipt(sl.PAYMENT_SCHEDULE_ID)
                           WHEN 'WO' THEN lwx_ar_query.get_wo_gift_card_receipt(sl.PAYMENT_SCHEDULE_ID)
