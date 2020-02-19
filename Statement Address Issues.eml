@@ -1,0 +1,248 @@
+Delivered-To: rich.stewart@lifeway.com
+Received: by 2002:a4a:2519:0:0:0:0:0 with SMTP id g25csp412043ooa;
+        Wed, 19 Feb 2020 03:28:48 -0800 (PST)
+X-Received: by 2002:a92:9c54:: with SMTP id h81mr24811346ili.81.1582111728404;
+        Wed, 19 Feb 2020 03:28:48 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1582111728; cv=none;
+        d=google.com; s=arc-20160816;
+        b=DwN7LIC6F+yvVmcfuBewqERVqBlYp/VuDZ04PKT4UvLN3SWmwFMEdFL9Spo+uT4OyV
+         aWAW3SSm/+IjoWnHyMRO0CcaH3XcO31eFO1bR05MTJTd6kaSp7ysmdPzQcbZyWWoLXBf
+         Gswee2KEvP2HctCcf2tHVBLjJy+cSMdro7wMvgcReMqVCH/jqZ5IxApKGB3fvxMIoyvo
+         zSvn0Z9IHOnZZ2TVkzaXWArk+ptmjl27bu4rc8rX8e9H/hFtvqhAHqYrEAhBD4VzXHjW
+         mY4+7NXt8a7I5iChJVU+WAXEiG0dVSo3IpEPwrgkDjjcGKzjHy7y7hPzMjJY9q/eQr5B
+         UfEA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :dkim-signature;
+        bh=CMkkZhY3KUBsnjapJOd2tavrSAjCppwS/Zf2xwO+/kg=;
+        b=BbWNazADQaPEozLnJQtat0SKpcVe8iPF+t5ehGYmQ2bGb5Oz5a+AzoLFNir3hoGkts
+         bU/LWj9Qe8sJXqz5bm0cC30liu1jqM09GpAzGOVtLRu6n9sM8+2AurYrj6PDRcncf5dP
+         JXrEDt55cx393OG32WBHP7JoXj4gd/LJKhz348UMrUiRlcVMQs4JRjAR/WhJBAbD3FLm
+         kPlRoCSBFKjIXO9DVHnbQU53S7xPb/15NrKtBXBejKiFEsELBHWX1WiozPrV0UnSnwj2
+         60yzHCcX5RjJYcr8XW/z/e1cpFcOGaU/TOu5VAK92LdZzpJHe3tH2YLRfSXBxGtdW2qD
+         KTHw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@lifeway.com header.s=google header.b=amxf6atY;
+       spf=pass (google.com: domain of greg.wright@lifeway.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=greg.wright@lifeway.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=lifeway.com
+Return-Path: <greg.wright@lifeway.com>
+Received: from mail-sor-f41.google.com (mail-sor-f41.google.com. [209.85.220.41])
+        by mx.google.com with SMTPS id a8sor1427957iod.55.2020.02.19.03.28.48
+        for <rich.stewart@lifeway.com>
+        (Google Transport Security);
+        Wed, 19 Feb 2020 03:28:48 -0800 (PST)
+Received-SPF: pass (google.com: domain of greg.wright@lifeway.com designates 209.85.220.41 as permitted sender) client-ip=209.85.220.41;
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@lifeway.com header.s=google header.b=amxf6atY;
+       spf=pass (google.com: domain of greg.wright@lifeway.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=greg.wright@lifeway.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=lifeway.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lifeway.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=CMkkZhY3KUBsnjapJOd2tavrSAjCppwS/Zf2xwO+/kg=;
+        b=amxf6atY+yg5ysUE7S1Y96KrBI5Lprb+C5XBdLYXTs9afT6lVOofyeD/kNoGnYqBng
+         aWg6lzHJ6NnpP0WrmxSrT0XiODBclkOhtAlXQ173HNrKxqjmjtRXnXMp74u1UbD0VM66
+         pEwK8LBIPL5nBQoBB7WuuK9HSJ+2NhRImgkOk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=CMkkZhY3KUBsnjapJOd2tavrSAjCppwS/Zf2xwO+/kg=;
+        b=Pi4ZodPA2SvI2kFeJUNcWVfmzOVI+nsvYhv+G3saZDU2KhCrITG7mV1c5qR76QcVJJ
+         6Y2UieAi7D9Q8pn4OU2kKTWruUybZUFtd9drXFbOqlotUz12+t8EzEgJgHbHR899ELOl
+         V0MtR778WkyHZ+VGuuXY6dYlgGkFJ/AQgR0dwYi+jEH65zKk4NPGXRUBFB78TGa9oz3z
+         sOASvAALRx/JLtPTMfD5gAO2THOf5KQ949ZLlkp/0LFXai3Yjb+olan13gV4HoVH9Th7
+         n8iAi0PwqL+jYsCki4szGZQIe//EV0OaP98KaRRhahTQ201AgZlheoifB+gVLoKlbNzR
+         +/JA==
+X-Gm-Message-State: APjAAAXznABRm/DF4mbzGCRwOXUin0akRgExH78ZC+zucaRkVl4p9w8A
+	vyW1C1cMM+302Z7aJF3Aq8WAf4Z95uyD9sS5rDvLYhPZbibBUA==
+X-Google-Smtp-Source: APXvYqxQge2wC3zlkBNNIgXTL+G1ZAt2QrDvStYs9Hb6XDq+HmlDXHwRic+HSWJnpZmbIky/BtabpYeubKQ1vlshZXs=
+X-Received: by 2002:a5d:9f12:: with SMTP id q18mr19417739iot.235.1582111727410;
+ Wed, 19 Feb 2020 03:28:47 -0800 (PST)
+MIME-Version: 1.0
+References: <202002190053.01J0r5AX63177142@oraebsprd.lifeway.org>
+In-Reply-To: <202002190053.01J0r5AX63177142@oraebsprd.lifeway.org>
+From: Greg Wright <greg.wright@lifeway.com>
+Date: Wed, 19 Feb 2020 05:28:11 -0600
+Message-ID: <CAACWsdgfie6emaWQuP0zG55c1FKVdDiVG9zQgyO9nC3f2Dun7g@mail.gmail.com>
+Subject: Fwd: Statement Address Issues
+To: Rich Stewart <rich.stewart@lifeway.com>
+Content-Type: multipart/alternative; boundary="00000000000082064a059eec173d"
+
+--00000000000082064a059eec173d
+Content-Type: text/plain; charset="UTF-8"
+
+Good morning. the message you see below is typical of what we get with wave
+F. We would have gotten the same message in DEV. To confirm that I went to
+DEV and pulled out one of the sql statements you will be changing. Knowing
+about this account might help you with your testing. You may need to
+execute the code that is commented out first, since some of the tables are
+tied to apps. I need to go over with you how to test statements.
+
+First I ran: select party_id, cust_account_id from ar.hz_cust_accounts
+where account_number = '2000049678'
+
+Then I ran the commented-out code.
+
+Then I ran the query below with HZ_LOC_ASSIGNMENTS not optional. Nothing
+was found.
+
+Then I made HZ_LOC_ASSIGNMENTS optional and a record was found.
+
+
+/*
+begin
+lwx_fnd_query.set_org(102);
+end;
+*/
+    SELECT loc.ADDRESS1,
+           loc.ADDRESS2,
+           loc.ADDRESS3,
+           loc.ADDRESS4,
+           loc.CITY,
+           substr(loc.STATE,1,2),
+           substr(loc.POSTAL_CODE,1,12),
+           terr.TERRITORY_SHORT_NAME
+      FROM apps.AR_LOOKUPS         l_cat,
+           apps.FND_TERRITORIES_VL terr,
+           apps.FND_LANGUAGES_VL   lang,
+           ar.HZ_CUST_ACCT_SITES_all addr,
+           ar.HZ_PARTY_SITES     party_site,
+           ar.HZ_CUST_SITE_USES_all  csu,
+           ar.HZ_LOCATIONS       loc,
+           apps.HZ_LOC_ASSIGNMENTS loc_assign
+     WHERE addr.CUSTOMER_CATEGORY_CODE = l_cat.LOOKUP_CODE(+)
+       AND l_cat.LOOKUP_TYPE(+) = 'ADDRESS_CATEGORY'
+       AND loc.COUNTRY = terr.TERRITORY_CODE(+)
+       AND loc.LANGUAGE = lang.LANGUAGE_CODE(+)
+       AND addr.PARTY_SITE_ID = party_site.PARTY_SITE_ID
+       AND csu.CUST_ACCT_SITE_ID = addr.CUST_ACCT_SITE_ID
+       AND csu.SITE_USE_CODE IN ('STMTS','BILL_TO')
+       AND NVL(csu.PRIMARY_FLAG, 'N') = 'Y'
+       AND loc.LOCATION_ID = party_site.LOCATION_ID
+       AND loc_assign.LOCATION_ID (+) = loc.LOCATION_ID --- Here is where I
+made hz_loc_assignments optional
+       AND addr.cust_account_id = 694237 -- cn_cust_id for account
+2000049678
+       AND party_site.PARTY_ID = 730058 -- cn_party_id
+       ORDER BY decode(csu.site_use_code,'STMTS',1,'BILL_TO',2,3);
+
+
+
+
+
+---------- Forwarded message ---------
+From: <applprod@lifeway.com>
+Date: Tue, Feb 18, 2020 at 6:56 PM
+Subject: Statement Address Issues
+To: <arsuppo@lifeway.com>, <greg.wright@lifeway.com>, <
+james.jordan@lifeway.com>, <keith.bevill@lifeway.com>, <
+mike.hamblin@lifeway.com>
+
+
+List of Messages:
+/u22/apps/oracle/PROD/inst/apps/PROD_oraebsprd/logs/appl/conc/log/l131347746.req
+*** Warning: Primary Bill_To Site Address not found
+*** Warning: Please fix the Primary Bill_To Site Details for customer
+number: 2000049678 Customer Skipped
+
+
+-- 
+Greg Wright
+Senior Software Engineer - Business Solutions
+LifeWay Christian Resources
+(615) 251-2398 (office)
+(615) 633-7989 (cell)
+
+--00000000000082064a059eec173d
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><div class=3D"gmail_default" style=3D"font-family:verdana,=
+sans-serif;font-size:small">Good morning. the message you see below is typi=
+cal of what we get with wave F. We would have gotten the same message in DE=
+V. To confirm that I went to DEV and pulled out one of the sql statements y=
+ou will be changing. Knowing about this account might help you with your te=
+sting. You may need to execute the code that is commented out first, since =
+some of the tables are tied to apps. I need to go over with you how to test=
+ statements.</div><div class=3D"gmail_default" style=3D"font-family:verdana=
+,sans-serif;font-size:small"><br></div><div class=3D"gmail_default" style=
+=3D"font-family:verdana,sans-serif;font-size:small">First I ran: select par=
+ty_id, cust_account_id from ar.hz_cust_accounts where account_number =3D &#=
+39;2000049678&#39;</div><div class=3D"gmail_default" style=3D"font-family:v=
+erdana,sans-serif;font-size:small"><br></div><div class=3D"gmail_default" s=
+tyle=3D"font-family:verdana,sans-serif;font-size:small">Then I ran the comm=
+ented-out code.</div><div class=3D"gmail_default" style=3D"font-family:verd=
+ana,sans-serif;font-size:small"><br></div><div class=3D"gmail_default" styl=
+e=3D"font-family:verdana,sans-serif;font-size:small">Then I ran the query b=
+elow with=20
+HZ_LOC_ASSIGNMENTS not optional. Nothing was found.</div><div class=3D"gmai=
+l_default" style=3D"font-family:verdana,sans-serif;font-size:small"><br></d=
+iv><div class=3D"gmail_default" style=3D"font-family:verdana,sans-serif;fon=
+t-size:small">Then I made=20
+HZ_LOC_ASSIGNMENTS optional and a record was found.<br></div><div class=3D"=
+gmail_default" style=3D"font-family:verdana,sans-serif;font-size:small"><br=
+></div><div class=3D"gmail_default" style=3D"font-family:verdana,sans-serif=
+;font-size:small"><br></div><div class=3D"gmail_default" style=3D"font-fami=
+ly:verdana,sans-serif;font-size:small">/*<br>begin<br>lwx_fnd_query.set_org=
+(102);<br>end;<br>*/<br>=C2=A0 =C2=A0 SELECT loc.ADDRESS1,<br>=C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0loc.ADDRESS2,<br>=C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0loc.ADDRESS3,<br>=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0loc.=
+ADDRESS4,<br>=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0loc.CITY,<br>=C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0substr(loc.STATE,1,2),<br>=C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0substr(loc.POSTAL_CODE,1,12),<br>=C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0terr.TERRITORY_SHORT_NAME<br>=C2=A0 =C2=A0 =C2=
+=A0 FROM apps.AR_LOOKUPS =C2=A0 =C2=A0 =C2=A0 =C2=A0 l_cat,<br>=C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0apps.FND_TERRITORIES_VL terr,<br>=C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0apps.FND_LANGUAGES_VL =C2=A0 lang,<br>=C2=A0=
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0ar.HZ_CUST_ACCT_SITES_all addr,<br>=C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0ar.HZ_PARTY_SITES =C2=A0 =C2=A0 party=
+_site,<br>=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0ar.HZ_CUST_SITE_USES_all=
+ =C2=A0csu,<br>=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0ar.HZ_LOCATIONS =C2=
+=A0 =C2=A0 =C2=A0 loc,<br>=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0apps.HZ_=
+LOC_ASSIGNMENTS loc_assign<br>=C2=A0 =C2=A0 =C2=A0WHERE addr.CUSTOMER_CATEG=
+ORY_CODE =3D l_cat.LOOKUP_CODE(+)<br>=C2=A0 =C2=A0 =C2=A0 =C2=A0AND l_cat.L=
+OOKUP_TYPE(+) =3D &#39;ADDRESS_CATEGORY&#39;<br>=C2=A0 =C2=A0 =C2=A0 =C2=A0=
+AND loc.COUNTRY =3D terr.TERRITORY_CODE(+)<br>=C2=A0 =C2=A0 =C2=A0 =C2=A0AN=
+D loc.LANGUAGE =3D lang.LANGUAGE_CODE(+)<br>=C2=A0 =C2=A0 =C2=A0 =C2=A0AND =
+addr.PARTY_SITE_ID =3D party_site.PARTY_SITE_ID<br>=C2=A0 =C2=A0 =C2=A0 =C2=
+=A0AND csu.CUST_ACCT_SITE_ID =3D addr.CUST_ACCT_SITE_ID<br>=C2=A0 =C2=A0 =
+=C2=A0 =C2=A0AND csu.SITE_USE_CODE IN (&#39;STMTS&#39;,&#39;BILL_TO&#39;)<b=
+r>=C2=A0 =C2=A0 =C2=A0 =C2=A0AND NVL(csu.PRIMARY_FLAG, &#39;N&#39;) =3D &#3=
+9;Y&#39;<br>=C2=A0 =C2=A0 =C2=A0 =C2=A0AND loc.LOCATION_ID =3D party_site.L=
+OCATION_ID<br>=C2=A0 =C2=A0 =C2=A0 =C2=A0AND loc_assign.LOCATION_ID (+) =3D=
+ loc.LOCATION_ID --- Here is where I made hz_loc_assignments optional<br>=
+=C2=A0 =C2=A0 =C2=A0 =C2=A0AND addr.cust_account_id =3D 694237 -- cn_cust_i=
+d for account 2000049678<br>=C2=A0 =C2=A0 =C2=A0 =C2=A0AND party_site.PARTY=
+_ID =3D 730058 -- cn_party_id<br>=C2=A0 =C2=A0 =C2=A0 =C2=A0ORDER BY decode=
+(csu.site_use_code,&#39;STMTS&#39;,1,&#39;BILL_TO&#39;,2,3);</div><div clas=
+s=3D"gmail_default" style=3D"font-family:verdana,sans-serif;font-size:small=
+"><br></div><div class=3D"gmail_default" style=3D"font-family:verdana,sans-=
+serif;font-size:small"><br></div><div class=3D"gmail_default" style=3D"font=
+-family:verdana,sans-serif;font-size:small"><br></div><div class=3D"gmail_d=
+efault" style=3D"font-family:verdana,sans-serif;font-size:small"><br></div>=
+<br><div class=3D"gmail_quote"><div dir=3D"ltr" class=3D"gmail_attr">------=
+---- Forwarded message ---------<br>From: <span dir=3D"auto">&lt;<a href=3D=
+"mailto:applprod@lifeway.com">applprod@lifeway.com</a>&gt;</span><br>Date: =
+Tue, Feb 18, 2020 at 6:56 PM<br>Subject: Statement Address Issues<br>To:  &=
+lt;<a href=3D"mailto:arsuppo@lifeway.com">arsuppo@lifeway.com</a>&gt;,  &lt=
+;<a href=3D"mailto:greg.wright@lifeway.com">greg.wright@lifeway.com</a>&gt;=
+,  &lt;<a href=3D"mailto:james.jordan@lifeway.com">james.jordan@lifeway.com=
+</a>&gt;,  &lt;<a href=3D"mailto:keith.bevill@lifeway.com">keith.bevill@lif=
+eway.com</a>&gt;,  &lt;<a href=3D"mailto:mike.hamblin@lifeway.com">mike.ham=
+blin@lifeway.com</a>&gt;<br></div><br><br>List of Messages:<br>
+/u22/apps/oracle/PROD/inst/apps/PROD_oraebsprd/logs/appl/conc/log/l13134774=
+6.req<br>
+*** Warning: Primary Bill_To Site Address not found<br>
+*** Warning: Please fix the Primary Bill_To Site Details for customer numbe=
+r: 2000049678 Customer Skipped<br>
+</div><br clear=3D"all"><br>-- <br><div dir=3D"ltr" class=3D"gmail_signatur=
+e" data-smartmail=3D"gmail_signature"><div dir=3D"ltr"><div><div dir=3D"ltr=
+"><div><div dir=3D"ltr"><div><span><font color=3D"#888888">Greg Wright<br>S=
+enior Software Engineer - Business Solutions<br>
+LifeWay Christian Resources<br><a value=3D"+16152513824">(615) 251-2398</a>=
+ (office) <br></font></span></div><span><font color=3D"#888888">(615) 633-7=
+989 (cell)=C2=A0 <br></font></span><div><span><font color=3D"#888888"><br><=
+/font></span></div></div></div></div></div></div></div></div>
+
+--00000000000082064a059eec173d--
