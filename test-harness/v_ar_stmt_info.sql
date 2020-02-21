@@ -2,7 +2,13 @@
 create or replace view v_ar_stmt_info
 as
 select
+-- We retrieve the particular keys of the three tables
+-- so that we may use them to make copies of derived 
+-- data later:
   sh.stmt_hdr_id -- want to retrieve specific items
+, sl.stmt_line_id
+, sd.stmt_line_dtl_id
+--
 , sh.send_to_cust_nbr
 , sh.statement_cycle_id
 , sh.stmt_run_conc_req_id
