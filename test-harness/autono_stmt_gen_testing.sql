@@ -17,6 +17,7 @@ is
   copy_stmt_data(p_send_to_cust_nbr varchar2, statement_cycle_id varchar2)
   ;
 end;
+/
 
 create or replace package body autono_stmt_gen_test
 is
@@ -53,11 +54,38 @@ is
   --   statement_cycle_id ::=  a copy of the p_statement_cycle_nme parameter, I believe...
   --   
   procedure
-  copy_stmt_data(p_send_to_cust_nbr varchar2, statement_cycle_id varchar2)
+  copy_stmt_data(p_send_to_cust_nbr varchar2, p_statement_cycle_id varchar2)
   is
     pragma autonomous_transaction;
   begin
-    null;
+    insert into rstewar.tst_lwx_ar_stmt_line_details
+    select dt.*
+    from lwx.lwx_ar_stmt_line_details dt, rstewar.v_ar_stmt_info si
+    where
+        si.send_to_cust_nbr = p_send_to_cust_nbr
+    and si.statement_cycle_id = p_statement_cycle_id
+    and dt.stmt_line_dtl_id = si.stmt_line_dtl_id
+    ;
+    --
+    insert into rstewar.tst_lwx_ar_stmt_lines
+    select sl.*
+    from lwx.lwx_ar_stmt_lines sl, rstewar.v_ar_stmt_info si
+    where
+        si.send_to_cust_nbr = p_send_to_cust_nbr
+    and si.statement_cycle_id = p_statement_cycle_id
+    and si.stmt_line_id = sl.stmt_line_id
+    ;
+    --
+    insert into rstewar.tst_lwx_ar_stmt_headers 
+    select sh.*
+    from lwx.lwx_ar_stmt_headers sd, rstewar.v_ar_stmt_info si
+    where
+        si.send_to_cust_nbr = p_send_to_cust_nbr
+    and si.statement_cycle_id = p_statement_cycle_id
+    and si.stmt_hdr_id = sh.stmt_hdr_id
+    ;
+    --
   end;
   --
 end autono_stmt_gen_test;
+/
