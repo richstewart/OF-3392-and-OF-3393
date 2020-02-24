@@ -1,3 +1,4 @@
+-- -*- tab-width: 4 indent-tabs-mode: nil -*-
 /*
 At present, we must create this inside the apps schema,
 since my user schema, rstewar, doesn't have the 
@@ -14,7 +15,7 @@ is
   )
   ;
   procedure
-  copy_stmt_data(p_send_to_cust_nbr varchar2, statement_cycle_id varchar2)
+  copy_stmt_data(p_send_to_cust_nbr varchar2, p_statement_cycle_id varchar2)
   ;
 end;
 /
@@ -44,8 +45,31 @@ is
     -- call to
     --   lwx_ar_invo_stmt_print.Generate_Con_Stmt
     -- can be rolled back.
+    --
+    -- "Dummy" parameter values demanded by Oracle framework, etc:
+    l_errbuf varchar2(2000);
+    l_retcode number;
+    --
   begin
-    null;
+    lwx_ar_invo_stmt_print.Generate_Con_Stmt(
+        errbuf => l_errbuf
+      , retcode => l_retcode
+      , p_statement_cycle_nme => p_statement_cycle_nme
+      , p_customer_nbr => p_customer_nbr
+      , p_stmt_as_of_date => p_stmt_as_of_date
+      , p_debug_flag => p_debug_flag
+    );
+    --
+    -- First, copy the data produced by the preceding into the
+    -- "tst_lwx_ar_stmt*" tables, and commit those results
+    -- via an autonomous transaction:
+    copy_stmt_data(p_customer_nbr, p_statement_cycle_nme);
+    --
+    -- Now, rollback the work that was done by the call to
+    --   lwx_ar_invo_stmt_print.Generate_Con_Stmt
+    -- in order to avoid making persistent changes to the regular
+    -- application "lwx_ar_stmt*" tables:
+    rollback; 
   end;
   --
   -- We must copy by identifying the header-record's
@@ -78,13 +102,15 @@ is
     --
     insert into rstewar.tst_lwx_ar_stmt_headers 
     select sh.*
-    from lwx.lwx_ar_stmt_headers sd, rstewar.v_ar_stmt_info si
+    from lwx.lwx_ar_stmt_headers sh, rstewar.v_ar_stmt_info si
     where
         si.send_to_cust_nbr = p_send_to_cust_nbr
     and si.statement_cycle_id = p_statement_cycle_id
     and si.stmt_hdr_id = sh.stmt_hdr_id
     ;
     --
+    -- the data inserted into the "tst_lwx_ar_stmt*" tables must be saved:
+    commit; 
   end;
   --
 end autono_stmt_gen_test;
