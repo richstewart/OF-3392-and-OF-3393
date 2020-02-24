@@ -1,0 +1,280 @@
+SQL> @desc lwx.lwx_ar_stmt_lines
+ Name                                                              Null?    Type
+ ----------------------------------------------------------------- -------- --------------------------------------------
+ STMT_LINE_ID                                                      NOT NULL NUMBER(22)
+ STMT_HDR_ID                                                       NOT NULL NUMBER(22)
+ STMT_LINE_NBR                                                     NOT NULL NUMBER(22)
+ INCL_CUR_STMT_IND                                                          VARCHAR2(1)
+ REC_TYPE_CDE                                                      NOT NULL VARCHAR2(2)
+ CUSTOMER_TRX_ID                                                            NUMBER(22)
+ CASH_RECEIPT_ID                                                            NUMBER(22)
+ PAYMENT_SCHEDULE_ID                                                        NUMBER(22)
+ PAGE_CNT                                                                   NUMBER(22)
+ LINE_CNT                                                                   NUMBER(22)
+ LOGO_CDE                                                                   VARCHAR2(30)
+ DOC_TITLE_NME                                                              VARCHAR2(40)
+ REP_MSG_NME                                                                VARCHAR2(60)
+ BILL_TO_CUST_NBR                                                           VARCHAR2(30)
+ BILL_TO_CUST_NME                                                           VARCHAR2(360)
+ BILL_TO_LINE_1_ADR                                                         VARCHAR2(240)
+ BILL_TO_LINE_2_ADR                                                         VARCHAR2(240)
+ BILL_TO_LINE_3_ADR                                                         VARCHAR2(240)
+ BILL_TO_LINE_4_ADR                                                         VARCHAR2(240)
+ BILL_TO_CITY_NME                                                           VARCHAR2(60)
+ BILL_TO_STATE_CDE                                                          VARCHAR2(5)
+ BILL_TO_POSTAL_CDE                                                         VARCHAR2(12)
+ BILL_TO_CNTRY_NME                                                          VARCHAR2(60)
+ SHIP_TO_CUST_NBR                                                           VARCHAR2(30)
+ SHIP_TO_CUST_NME                                                           VARCHAR2(360)
+ SHIP_TO_LINE_1_ADR                                                         VARCHAR2(240)
+ SHIP_TO_LINE_2_ADR                                                         VARCHAR2(240)
+ SHIP_TO_LINE_3_ADR                                                         VARCHAR2(240)
+ SHIP_TO_LINE_4_ADR                                                         VARCHAR2(240)
+ SHIP_TO_CITY_NME                                                           VARCHAR2(60)
+ SHIP_TO_STATE_CDE                                                          VARCHAR2(5)
+ SHIP_TO_POSTAL_CDE                                                         VARCHAR2(12)
+ SHIP_TO_CNTRY_NME                                                          VARCHAR2(60)
+ SPCL_LINE_IND                                                              VARCHAR2(1)
+ TRANS_DTE                                                                  DATE
+ TRANS_NBR                                                                  VARCHAR2(30)
+ DOC_TYPE_NME                                                               VARCHAR2(30)
+ SLS_CHNL_NME                                                               VARCHAR2(30)
+ CUST_REF_NME                                                               VARCHAR2(30)
+ FUT_PMT_IND                                                                VARCHAR2(1)
+ PARTIAL_PMT_IND                                                            VARCHAR2(1)
+ DUE_DTE                                                                    DATE
+ DOC_REF_NME                                                                VARCHAR2(20)
+ ORIG_AMT                                                                   NUMBER
+ OUTSTND_AMT                                                                NUMBER
+ TERM_MSG1_NME                                                              VARCHAR2(100)
+ TERM_MSG2_NME                                                              VARCHAR2(100)
+ CUST_CONT_NME                                                              VARCHAR2(100)
+ CUST_CONT_PHONE_NBR                                                        VARCHAR2(50)
+ ORDER_DTE                                                                  DATE
+ SHIP_METH_NME                                                              VARCHAR2(100)
+ SUB_TOTAL_AMT                                                              NUMBER
+ SHIP_HNDL_AMT                                                              NUMBER
+ TAX_AMT                                                                    NUMBER
+ PMT_USED_AMT                                                               NUMBER
+ TOTAL_DUE_AMT                                                              NUMBER
+ MKT_MSG1_NME                                                               VARCHAR2(50)
+ MKT_MSG2_NME                                                               VARCHAR2(50)
+ MKT_MSG3_NME                                                               VARCHAR2(50)
+ MKT_MSG4_NME                                                               VARCHAR2(50)
+ CREATED_BY                                                        NOT NULL NUMBER(15)
+ CREATION_DATE                                                     NOT NULL DATE
+ LAST_UPDATED_BY                                                   NOT NULL NUMBER(15)
+ LAST_UPDATE_DATE                                                  NOT NULL DATE
+ LAST_UPDATE_LOGIN                                                          NUMBER(15)
+ PURCHASE_ORDER                                                             VARCHAR2(50)
+ COMMENTS                                                                   VARCHAR2(1760)
+
+
+SQL> @desc lwx.lwx_ar_stmt_headers
+ Name                                                              Null?    Type
+ ----------------------------------------------------------------- -------- --------------------------------------------
+ STMT_HDR_ID                                                       NOT NULL NUMBER(22)
+ STATEMENT_CYCLE_ID                                                NOT NULL NUMBER(15)
+ STMT_RUN_CONC_REQ_ID                                                       NUMBER(22)
+ STMT_DTE                                                          NOT NULL DATE
+ STMT_CRNCY_CDE                                                    NOT NULL VARCHAR2(15)
+ STMT_LANG_CDE                                                     NOT NULL VARCHAR2(3)
+ PPD_PAGE_CNT                                                               NUMBER(22)
+ DTL_PAGE_CNT                                                               NUMBER(22)
+ INVO_PAGE_CNT                                                              NUMBER(22)
+ TOTAL_PAGE_CNT                                                             NUMBER(22)
+ LOGO_CDE                                                                   VARCHAR2(30)
+ SEND_TO_CUST_ACCT_SITE_ID                                         NOT NULL NUMBER(22)
+ SEND_TO_CUST_NBR                                                  NOT NULL VARCHAR2(30)
+ SEND_TO_CUST_NME                                                  NOT NULL VARCHAR2(360)
+ SEND_TO_LINE_1_ADR                                                         VARCHAR2(240)
+ SEND_TO_LINE_2_ADR                                                         VARCHAR2(240)
+ SEND_TO_LINE_3_ADR                                                         VARCHAR2(240)
+ SEND_TO_LINE_4_ADR                                                         VARCHAR2(240)
+ SEND_TO_CITY_NME                                                           VARCHAR2(60)
+ SEND_TO_STATE_CDE                                                          VARCHAR2(5)
+ SEND_TO_POSTAL_CDE                                                         VARCHAR2(12)
+ SEND_TO_CNTRY_NME                                                          VARCHAR2(60)
+ REP_PHONE_NBR                                                              VARCHAR2(30)
+ OVER_DUE_AMT                                                               NUMBER
+ DUE_AMT                                                                    NUMBER
+ TO_PAY_AMT                                                                 NUMBER
+ STMT_DUE_DTE                                                               DATE
+ NOT_DUE_AMT                                                                NUMBER
+ BALANCE_AMT                                                                NUMBER
+ MSG1_NME                                                                   VARCHAR2(40)
+ MSG2_NME                                                                   VARCHAR2(40)
+ SCAN_LINE_NME                                                              VARCHAR2(50)
+ LW_FAX_NBR                                                                 VARCHAR2(50)
+ LW_EMAIL_ADR                                                               VARCHAR2(150)
+ CREATED_BY                                                        NOT NULL NUMBER(15)
+ CREATION_DATE                                                     NOT NULL DATE
+ LAST_UPDATED_BY                                                   NOT NULL NUMBER(15)
+ LAST_UPDATED_DATE                                                 NOT NULL DATE
+ LAST_UPDATE_LOGIN                                                          NUMBER(15)
+ CUST_EMAIL_ADR                                                             VARCHAR2(150)
+
+
+apps@DEV
+SQL> @desc lwx.lwx_ar_stmt_line_details
+ Name                                                              Null?    Type
+ ----------------------------------------------------------------- -------- --------------------------------------------
+ STMT_LINE_DTL_ID                                                  NOT NULL NUMBER(22)
+ STMT_LINE_ID                                                      NOT NULL NUMBER(22)
+ STMT_LINE_DTL_NBR                                                 NOT NULL NUMBER(22)
+ LINE_TYPE_CDE                                                              VARCHAR2(1)
+ CUSTOMER_TRX_LINE_ID                                                       NUMBER(22)
+ ORDERED_QTY_CNT                                                            NUMBER
+ SHIPPED_QTY_CNT                                                            NUMBER
+ ITEM_NBR                                                                   VARCHAR2(100)
+ ALT_ITEM_NBR                                                               VARCHAR2(100)
+ LINE_DESC_TXT                                                              VARCHAR2(1000)
+ SELLING_PRICE_AMT                                                          NUMBER
+ SELLING_DISC_AMT                                                           NUMBER
+ EXTENDED_AMT                                                               NUMBER
+ CREATED_BY                                                        NOT NULL NUMBER(15)
+ CREATION_DATE                                                     NOT NULL DATE
+ LAST_UPDATED_BY                                                   NOT NULL NUMBER(15)
+ LAST_UPDATE_DATE                                                  NOT NULL DATE
+ LAST_UPDATE_LOGIN                                                          NUMBER(15)
+
+
+apps@DEV
+SQL> @desc ar.hz_cust_accounts
+ Name                                                              Null?    Type
+ ----------------------------------------------------------------- -------- --------------------------------------------
+ CUST_ACCOUNT_ID                                                   NOT NULL NUMBER(15)
+ PARTY_ID                                                          NOT NULL NUMBER(15)
+ LAST_UPDATE_DATE                                                  NOT NULL DATE
+ ACCOUNT_NUMBER                                                    NOT NULL VARCHAR2(30)
+ LAST_UPDATED_BY                                                   NOT NULL NUMBER(15)
+ CREATION_DATE                                                     NOT NULL DATE
+ CREATED_BY                                                        NOT NULL NUMBER(15)
+ LAST_UPDATE_LOGIN                                                          NUMBER(15)
+ REQUEST_ID                                                                 NUMBER(15)
+ PROGRAM_APPLICATION_ID                                                     NUMBER(15)
+ PROGRAM_ID                                                                 NUMBER(15)
+ PROGRAM_UPDATE_DATE                                                        DATE
+ WH_UPDATE_DATE                                                             DATE
+ ATTRIBUTE_CATEGORY                                                         VARCHAR2(30)
+ ATTRIBUTE1                                                                 VARCHAR2(150)
+ ATTRIBUTE2                                                                 VARCHAR2(150)
+ ATTRIBUTE3                                                                 VARCHAR2(150)
+ ATTRIBUTE4                                                                 VARCHAR2(150)
+ ATTRIBUTE5                                                                 VARCHAR2(150)
+ ATTRIBUTE6                                                                 VARCHAR2(150)
+ ATTRIBUTE7                                                                 VARCHAR2(150)
+ ATTRIBUTE8                                                                 VARCHAR2(150)
+ ATTRIBUTE9                                                                 VARCHAR2(150)
+ ATTRIBUTE10                                                                VARCHAR2(150)
+ ATTRIBUTE11                                                                VARCHAR2(150)
+ ATTRIBUTE12                                                                VARCHAR2(150)
+ ATTRIBUTE13                                                                VARCHAR2(150)
+ ATTRIBUTE14                                                                VARCHAR2(150)
+ ATTRIBUTE15                                                                VARCHAR2(150)
+ ATTRIBUTE16                                                                VARCHAR2(150)
+ ATTRIBUTE17                                                                VARCHAR2(150)
+ ATTRIBUTE18                                                                VARCHAR2(150)
+ ATTRIBUTE19                                                                VARCHAR2(150)
+ ATTRIBUTE20                                                                VARCHAR2(150)
+ GLOBAL_ATTRIBUTE_CATEGORY                                                  VARCHAR2(30)
+ GLOBAL_ATTRIBUTE1                                                          VARCHAR2(150)
+ GLOBAL_ATTRIBUTE2                                                          VARCHAR2(150)
+ GLOBAL_ATTRIBUTE3                                                          VARCHAR2(150)
+ GLOBAL_ATTRIBUTE4                                                          VARCHAR2(150)
+ GLOBAL_ATTRIBUTE5                                                          VARCHAR2(150)
+ GLOBAL_ATTRIBUTE6                                                          VARCHAR2(150)
+ GLOBAL_ATTRIBUTE7                                                          VARCHAR2(150)
+ GLOBAL_ATTRIBUTE8                                                          VARCHAR2(150)
+ GLOBAL_ATTRIBUTE9                                                          VARCHAR2(150)
+ GLOBAL_ATTRIBUTE10                                                         VARCHAR2(150)
+ GLOBAL_ATTRIBUTE11                                                         VARCHAR2(150)
+ GLOBAL_ATTRIBUTE12                                                         VARCHAR2(150)
+ GLOBAL_ATTRIBUTE13                                                         VARCHAR2(150)
+ GLOBAL_ATTRIBUTE14                                                         VARCHAR2(150)
+ GLOBAL_ATTRIBUTE15                                                         VARCHAR2(150)
+ GLOBAL_ATTRIBUTE16                                                         VARCHAR2(150)
+ GLOBAL_ATTRIBUTE17                                                         VARCHAR2(150)
+ GLOBAL_ATTRIBUTE18                                                         VARCHAR2(150)
+ GLOBAL_ATTRIBUTE19                                                         VARCHAR2(150)
+ GLOBAL_ATTRIBUTE20                                                         VARCHAR2(150)
+ ORIG_SYSTEM_REFERENCE                                             NOT NULL VARCHAR2(240)
+ STATUS                                                            NOT NULL VARCHAR2(1)
+ CUSTOMER_TYPE                                                              VARCHAR2(30)
+ CUSTOMER_CLASS_CODE                                                        VARCHAR2(30)
+ PRIMARY_SALESREP_ID                                                        NUMBER(15)
+ SALES_CHANNEL_CODE                                                         VARCHAR2(30)
+ ORDER_TYPE_ID                                                              NUMBER(15)
+ PRICE_LIST_ID                                                              NUMBER(15)
+ SUBCATEGORY_CODE                                                           VARCHAR2(30)
+ TAX_CODE                                                                   VARCHAR2(50)
+ FOB_POINT                                                                  VARCHAR2(30)
+ FREIGHT_TERM                                                               VARCHAR2(30)
+ SHIP_PARTIAL                                                               VARCHAR2(1)
+ SHIP_VIA                                                                   VARCHAR2(30)
+ WAREHOUSE_ID                                                               NUMBER(15)
+ PAYMENT_TERM_ID                                                            NUMBER(15)
+ TAX_HEADER_LEVEL_FLAG                                                      VARCHAR2(1)
+ TAX_ROUNDING_RULE                                                          VARCHAR2(30)
+ COTERMINATE_DAY_MONTH                                                      VARCHAR2(6)
+ PRIMARY_SPECIALIST_ID                                                      NUMBER(15)
+ SECONDARY_SPECIALIST_ID                                                    NUMBER(15)
+ ACCOUNT_LIABLE_FLAG                                                        VARCHAR2(1)
+ RESTRICTION_LIMIT_AMOUNT                                                   NUMBER
+ CURRENT_BALANCE                                                            NUMBER
+ PASSWORD_TEXT                                                              VARCHAR2(60)
+ HIGH_PRIORITY_INDICATOR                                                    VARCHAR2(1)
+ ACCOUNT_ESTABLISHED_DATE                                                   DATE
+ ACCOUNT_TERMINATION_DATE                                                   DATE
+ ACCOUNT_ACTIVATION_DATE                                                    DATE
+ CREDIT_CLASSIFICATION_CODE                                                 VARCHAR2(30)
+ DEPARTMENT                                                                 VARCHAR2(30)
+ MAJOR_ACCOUNT_NUMBER                                                       VARCHAR2(30)
+ HOTWATCH_SERVICE_FLAG                                                      VARCHAR2(1)
+ HOTWATCH_SVC_BAL_IND                                                       VARCHAR2(30)
+ HELD_BILL_EXPIRATION_DATE                                                  DATE
+ HOLD_BILL_FLAG                                                             VARCHAR2(1)
+ HIGH_PRIORITY_REMARKS                                                      VARCHAR2(80)
+ PO_EFFECTIVE_DATE                                                          DATE
+ PO_EXPIRATION_DATE                                                         DATE
+ REALTIME_RATE_FLAG                                                         VARCHAR2(1)
+ SINGLE_USER_FLAG                                                           VARCHAR2(1)
+ WATCH_ACCOUNT_FLAG                                                         VARCHAR2(1)
+ WATCH_BALANCE_INDICATOR                                                    VARCHAR2(1)
+ GEO_CODE                                                                   VARCHAR2(30)
+ ACCT_LIFE_CYCLE_STATUS                                                     VARCHAR2(30)
+ ACCOUNT_NAME                                                               VARCHAR2(240)
+ DEPOSIT_REFUND_METHOD                                                      VARCHAR2(20)
+ DORMANT_ACCOUNT_FLAG                                                       VARCHAR2(1)
+ NPA_NUMBER                                                                 VARCHAR2(60)
+ PIN_NUMBER                                                                 NUMBER(16)
+ SUSPENSION_DATE                                                            DATE
+ WRITE_OFF_ADJUSTMENT_AMOUNT                                                NUMBER
+ WRITE_OFF_PAYMENT_AMOUNT                                                   NUMBER
+ WRITE_OFF_AMOUNT                                                           NUMBER
+ SOURCE_CODE                                                                VARCHAR2(150)
+ COMPETITOR_TYPE                                                            VARCHAR2(150)
+ COMMENTS                                                                   VARCHAR2(240)
+ DATES_NEGATIVE_TOLERANCE                                                   NUMBER
+ DATES_POSITIVE_TOLERANCE                                                   NUMBER
+ DATE_TYPE_PREFERENCE                                                       VARCHAR2(20)
+ OVER_SHIPMENT_TOLERANCE                                                    NUMBER
+ UNDER_SHIPMENT_TOLERANCE                                                   NUMBER
+ OVER_RETURN_TOLERANCE                                                      NUMBER
+ UNDER_RETURN_TOLERANCE                                                     NUMBER
+ ITEM_CROSS_REF_PREF                                                        VARCHAR2(30)
+ SHIP_SETS_INCLUDE_LINES_FLAG                                               VARCHAR2(1)
+ ARRIVALSETS_INCLUDE_LINES_FLAG                                             VARCHAR2(1)
+ SCHED_DATE_PUSH_FLAG                                                       VARCHAR2(1)
+ INVOICE_QUANTITY_RULE                                                      VARCHAR2(30)
+ PRICING_EVENT                                                              VARCHAR2(30)
+ ACCOUNT_REPLICATION_KEY                                                    NUMBER(15)
+ STATUS_UPDATE_DATE                                                         DATE
+ AUTOPAY_FLAG                                                               VARCHAR2(1)
+ NOTIFY_FLAG                                                                VARCHAR2(1)
+ LAST_BATCH_ID                                                              NUMBER
+ ORG_ID                                                                     NUMBER(15)
+ OBJECT_VERSION_NUMBER                                                      NUMBER
+ CREATED_BY_MODULE                                                          VARCHAR2(150)
+ APPLICATION_ID                                                             NUMBER
+ SELLING_PARTY_ID                                                           NUMBER(15)
