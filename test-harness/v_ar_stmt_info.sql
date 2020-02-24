@@ -6,8 +6,11 @@ select
 -- so that we may use them to make copies of derived 
 -- data later:
   sh.stmt_hdr_id -- want to retrieve specific items
-, sl.stmt_line_id
-, sd.stmt_line_dtl_id
+-- The sl.stmt_line_id is a joining column that will be provided
+-- from the lwx_ar_stmt_lines, right?
+-- ,  sl.stmt_line_id
+-- We'll also need the sd.stmt_line_dtl_id, but that's provided
+-- later in this select clause!
 --
 , sh.send_to_cust_nbr
 , sh.statement_cycle_id
