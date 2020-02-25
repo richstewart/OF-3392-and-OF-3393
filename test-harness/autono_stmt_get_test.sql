@@ -22,6 +22,15 @@ end;
 
 create or replace package body autono_stmt_gen_test
 is
+  -- 2020-02-25 Tue 11:58
+  -- This procedure probably won't be that useful, for it's not practicable to
+  -- invoke
+  --   lwx_ar_invo_stmt_print.Generate_Con_Stmt
+  -- separately from its enclosing context.
+  -- It appears that there is a lot of "session state" which is set up by
+  -- Oracle Ebsuite which the lwx_ar_invo_stmt_print package needs/assumes
+  -- to be in place.  Until/unless we figure that stuff out and provide an
+  -- alternative way to set that up, we won't be able to use this procedure.
   procedure
   invoke_gen_con_stmt_tbls(
       p_statement_cycle_nme IN VARCHAR2  -- REQUIRED
@@ -63,13 +72,13 @@ is
     -- First, copy the data produced by the preceding into the
     -- "tst_lwx_ar_stmt*" tables, and commit those results
     -- via an autonomous transaction:
-    copy_stmt_data(p_customer_nbr, p_statement_cycle_nme);
+    -- copy_stmt_data(p_customer_nbr, p_statement_cycle_nme);
     --
     -- Now, rollback the work that was done by the call to
     --   lwx_ar_invo_stmt_print.Generate_Con_Stmt
     -- in order to avoid making persistent changes to the regular
     -- application "lwx_ar_stmt*" tables:
-    rollback; 
+    -- rollback; 
   end;
   --
   -- We must copy by identifying the header-record's
@@ -78,38 +87,72 @@ is
   --   statement_cycle_id ::=  a copy of the p_statement_cycle_nme parameter, I believe...
   --   
   procedure
-  copy_stmt_data(p_send_to_cust_nbr varchar2, p_statement_cycle_id varchar2)
+  copy_stmt_data(
+    p_send_to_cust_nbr varchar2,
+    p_statement_cycle_nme varchar2,
+    p_statement_date date
+    )
   is
     pragma autonomous_transaction;
+    --
+    l_statement_cycle_id number;
+    l_test_sequence number;
   begin
+    select
+      sc.statement_cycle_id
+    into
+      l_statement_cycle_id
+    from
+      ar_statement_cycles sc
+    , hz_cust_accounts ac
+    , hz_customer_profiles hcp
+    where
+        sc.name = p_statement_cycle_nme
+    and sc.statement_cycle_id = hcp.statement_cycle_id
+    and hcp.send_statements = 'Y'
+    and ac.cust_account_id = hcp.cust_account_id
+    and hcp.site_use_id is null
+    and ac.account_number = p_send_to_cust_nbr
+    ;
+    --
+    -- Retrieve the needed sequence value:
+    select rstewar.stmt_tst_seq.nextval into l_test_sequence from dual;
+    --
     insert into rstewar.tst_lwx_ar_stmt_line_details
-    select dt.*
+    select dt.*, sysdate test_date, l_test_sequence test_sequence
     from lwx.lwx_ar_stmt_line_details dt, rstewar.v_ar_stmt_info si
     where
         si.send_to_cust_nbr = p_send_to_cust_nbr
-    and si.statement_cycle_id = p_statement_cycle_id
+    and si.statement_cycle_id = l_stmt_cycle_id
     and dt.stmt_line_dtl_id = si.stmt_line_dtl_id
+    and si.stmt_dte = p_statement_date
     ;
+    dbms_output.put_line('Copied '||to_char(sql%rowcount,'tm9')||' rows into tst_lwx_ar_stmt_line_details.');
     --
     insert into rstewar.tst_lwx_ar_stmt_lines
-    select sl.*
+    select sl.*, sysdate test_date, l_test_sequence test_sequence
     from lwx.lwx_ar_stmt_lines sl, rstewar.v_ar_stmt_info si
     where
         si.send_to_cust_nbr = p_send_to_cust_nbr
-    and si.statement_cycle_id = p_statement_cycle_id
+    and si.statement_cycle_id = l_stmt_cycle_id
     and si.stmt_line_id = sl.stmt_line_id
+    and si.stmt_dte = p_statement_date
     ;
+    dbms_output.put_line('Copied '||to_char(sql%rowcount,'tm9')||' rows into tst_lwx_ar_stmt_lines.');
     --
     insert into rstewar.tst_lwx_ar_stmt_headers 
-    select sh.*
+    select sh.*, sysdate test_date, l_test_sequence test_sequence
     from lwx.lwx_ar_stmt_headers sh, rstewar.v_ar_stmt_info si
     where
         si.send_to_cust_nbr = p_send_to_cust_nbr
-    and si.statement_cycle_id = p_statement_cycle_id
+    and si.statement_cycle_id = l_statement_cycle_id
     and si.stmt_hdr_id = sh.stmt_hdr_id
+    and si.stmt_dte = p_statement_date
     ;
+    dbms_output.put_line('Copied '||to_char(sql%rowcount,'tm9')||' rows into tst_lwx_ar_stmt_headers.');
     --
-    -- the data inserted into the "tst_lwx_ar_stmt*" tables must be saved:
+    -- the data inserted into the "tst_lwx_ar_stmt*" tables must be saved,
+    -- and this happens independently of other transactions in this session:
     commit; 
   end;
   --
