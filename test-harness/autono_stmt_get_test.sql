@@ -15,7 +15,11 @@ is
   )
   ;
   procedure
-  copy_stmt_data(p_send_to_cust_nbr varchar2, p_statement_cycle_id varchar2)
+  copy_stmt_data(
+    p_send_to_cust_nbr varchar2,
+    p_statement_cycle_nme varchar2,
+    p_statement_date date
+    )
   ;
 end;
 /
