@@ -162,3 +162,15 @@ is
   --
 end autono_stmt_gen_test;
 /
+/*
+copy test results with a statement like:
+
+begin
+  autono_stmt_gen_test.copy_stmt_data(
+    :p_customer_nbr,
+    :p_statement_cycle_nme,
+    to_date('25-feb-2020 10:23:06','dd-mon-yyyy hh24:mi:ss') -- <<<< this should be the date pushed into the stmt_dte column...
+  );
+end;
+
+*/
