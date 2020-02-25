@@ -127,7 +127,7 @@ is
     from lwx.lwx_ar_stmt_line_details dt, rstewar.v_ar_stmt_info si
     where
         si.send_to_cust_nbr = p_send_to_cust_nbr
-    and si.statement_cycle_id = l_stmt_cycle_id
+    and si.statement_cycle_id = l_statement_cycle_id
     and dt.stmt_line_dtl_id = si.stmt_line_dtl_id
     and si.stmt_dte = p_statement_date
     ;
@@ -138,7 +138,7 @@ is
     from lwx.lwx_ar_stmt_lines sl, rstewar.v_ar_stmt_info si
     where
         si.send_to_cust_nbr = p_send_to_cust_nbr
-    and si.statement_cycle_id = l_stmt_cycle_id
+    and si.statement_cycle_id = l_statement_cycle_id
     and si.stmt_line_id = sl.stmt_line_id
     and si.stmt_dte = p_statement_date
     ;
