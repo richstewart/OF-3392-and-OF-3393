@@ -1,6 +1,7 @@
 var p_statement_cycle_nme varchar2(1000)
-exec :p_statement_cycle_nme := 'W1';
 var p_customer_nbr varchar2(50)
+
+exec :p_statement_cycle_nme := 'W1';
 exec :p_customer_nbr := '0000571900';
 
 -- taken from the 
@@ -66,3 +67,142 @@ from(
 ) 
 group by statement_cycle_name
 group by customer_number having count(distinct statement_cycle_name) > 1
+
+
+-- ********************************************************************************
+-- trying to find the "open items" this is the query used by the package to find
+-- the so-called open items from "first principles," or something closer!
+
+    -- SQL #4
+    -- Open Item Cursor Declaration
+    -- Jude Lam 05/02/06 modify the where clause.
+
+var p_customer_id number
+
+    CURSOR v_openitem_cur(p_customer_id IN NUMBER) IS
+      SELECT ctt.TYPE,
+             rct.PRINTING_OPTION DEFAULT_PRINTING_OPTION,
+             aps.CUSTOMER_TRX_ID,
+             aps.TRX_NUMBER,
+             aps.TRX_DATE,
+             aps.CASH_RECEIPT_ID,
+             aps.PAYMENT_SCHEDULE_ID,
+             aps.CLASS,
+             aps.AMOUNT_DUE_ORIGINAL,
+             aps.AMOUNT_DUE_REMAINING,
+             aps.DUE_DATE,
+             aps.TERM_ID,
+             aps.TERMS_SEQUENCE_NUMBER,
+             rct.ATTRIBUTE3,
+             rct.ATTRIBUTE4,
+             (case
+                when rct.interface_header_context = 'Interest Invoice' then 'LF'
+                else rct.attribute5
+              end) attribute5,
+             rct.ATTRIBUTE6,
+             rct.ATTRIBUTE7,
+             rct.PURCHASE_ORDER,
+--gw             replace(replace(rct.COMMENTS,CHR(10),' '),CHR(13),'') COMMENTS,  -- dhoward 17/MAR/08 -remove multi line chr
+             regexp_replace(rct.COMMENTS, '[^ -{^}~]', '') COMMENTS,
+             rct.INTERFACE_HEADER_ATTRIBUTE1,
+             rct.INTERFACE_HEADER_CONTEXT,
+             arm.PAYMENT_TYPE_CODE,
+             dtyp.DOC_TYPE_NME,
+             cra.COMMENTS CASH_COMMENTS
+        FROM AR_PAYMENT_SCHEDULES aps,
+             RA_CUSTOMER_TRX      rct,
+             RA_CUST_TRX_TYPES    ctt,
+             AR_RECEIPT_METHODS   arm,
+             AR_CASH_RECEIPTS_ALL cra,
+             (-- Document Type Sub Table 
+              SELECT LOOKUP_CODE, MEANING doc_type_nme
+              FROM FND_LOOKUP_VALUES_VL
+              WHERE LOOKUP_TYPE = 'INV/CM') dtyp
+       WHERE aps.CUSTOMER_ID = :p_customer_id -- WARNING! THIS IS SEPARATE AND DISTINCT FROM THE "customer_nbr"!!!
+         AND (CASE rct.attribute5
+               WHEN 'WO' THEN lwx_ar_query.get_wo_gift_card_receipt(APS.PAYMENT_SCHEDULE_ID)
+               WHEN 'ET' THEN lwx_ar_query.get_wo_gift_card_receipt(APS.PAYMENT_SCHEDULE_ID)
+               WHEN 'FC' THEN lwx_ar_query.get_wo_gift_card_receipt(APS.PAYMENT_SCHEDULE_ID)                 
+               ELSE NULL  
+              END) IS NULL
+         AND rct.CUSTOMER_TRX_ID(+) = nvl(aps.CUSTOMER_TRX_ID, -999) -- Jude Lam 05/17/06 update
+         AND ctt.CUST_TRX_TYPE_ID(+) = rct.CUST_TRX_TYPE_ID
+         AND aps.status = 'OP'
+         AND nvl(rct.RECEIPT_METHOD_ID,0) = arm.RECEIPT_METHOD_ID(+)
+         AND nvl(aps.CASH_RECEIPT_ID,0) = cra.CASH_RECEIPT_ID(+)
+         AND aps.class = dtyp.lookup_code (+)
+         AND (CASE aps.class
+               WHEN 'PMT' THEN lwx_ar_query.get_wo_gift_card_receipt(APS.PAYMENT_SCHEDULE_ID)
+               ELSE NULL
+              END) IS NULL
+
+
+-- ################################################################################
+
+
+var p_stmt_header_id number
+rem the next is for holding date strings formatted as 'dd-mon-yyyy hh24:mi:ss'
+var p_last_stmt_date_global varchar2(21) 
+var p_ovr_due_amt number
+var p_due_date_adjustment number
+
+-- another query snatched from within the lwx_ar_invo_stmt_print:
+begin
+         SELECT NVL(DBT.DEBIT_AMT,0) + NVL(CRE.CREDIT_AMT, 0)
+          INTO :p_ovr_due_amt
+          FROM (-- Debit Amount Table
+                SELECT SUM(NVL(sl.OUTSTND_AMT, 0)) DEBIT_AMT
+                  FROM LWX_AR_STMT_LINES   SL,
+                       RA_CUSTOMER_TRX_ALL TRX
+                 WHERE STMT_HDR_ID = :p_stmt_header_id -- 8504107 -- v_stmt_header_id 
+                   AND REC_TYPE_CDE = 'F3' 
+                   AND OUTSTND_AMT >= 0 
+                   AND SL.CUSTOMER_TRX_ID = TRX.CUSTOMER_TRX_ID(+) 
+                   AND (TRUNC(GREATEST(SL.DUE_DTE, NVL(TRX.CREATION_DATE, SL.DUE_DTE))) + :p_due_date_adjustment)
+                              < trunc(to_date(:p_last_stmt_date_global,'dd-mon-yyyy')) -- to_date('17-dec-2019','dd-mon-yyyy') -- TRUNC(v_last_stmt_date_global)
+                   AND (CASE trx.attribute5
+                          WHEN 'ET' THEN lwx_ar_query.get_wo_gift_card_receipt(sl.PAYMENT_SCHEDULE_ID)
+                          WHEN 'WO' THEN lwx_ar_query.get_wo_gift_card_receipt(sl.PAYMENT_SCHEDULE_ID)
+                          WHEN 'FC' THEN lwx_ar_query.get_wo_gift_card_receipt(sl.PAYMENT_SCHEDULE_ID)                            
+                          ELSE NULL  
+                        END) IS NULL
+                   -- Prepay items should not be considered overdue until has appeared in F3 section before
+                   AND (lwx_ar_invo_stmt_print.get_prepay(SL.PAYMENT_SCHEDULE_ID,'N','Y') IS NULL
+                        OR 
+                        EXISTS (SELECT 1 
+                                FROM LWX_AR_STMT_LINES SL2
+                                WHERE SL2.STMT_HDR_ID <> :p_stmt_header_id -- 8504107  -- v_stmt_header_id
+                                AND SL2.REC_TYPE_CDE = 'F3'
+                                AND SL2.CUSTOMER_TRX_ID = SL.CUSTOMER_TRX_ID)
+                       )
+                ) DBT,
+               (-- Credit Amount Table 
+                SELECT NVL(SUM(NVL(LASL2.OUTSTND_AMT, 0)), 0) CREDIT_AMT
+               	  FROM LWX_AR_STMT_LINES LASL2
+                 WHERE STMT_HDR_ID = :p_stmt_header_id /* 8504107 */ /* v_stmt_header_id */ AND
+            	       REC_TYPE_CDE = 'F3' AND
+        	           OUTSTND_AMT < 0 
+                ) CRE
+		;
+end;
+
+/* example block to set the variables: */
+begin
+  -- We merely need the "lastest" statement information,
+  -- so the max() function helps with that.
+  -- This isn't necessarily the most general solution!
+  select max(stmt_hdr_id)
+  into :p_stmt_header_id
+  from rstewar.v_ar_stmt_info
+  where send_to_cust_nbr = :p_customer_nbr;
+  --
+  :p_last_stmt_date_global := '25-jan-2020';
+  --
+  :p_due_date_adjustment := 10;
+end;
+
+/* AFTER EXECUTING THE ABOVE BLOCK TO SET THE 
+   CLIENT-SIDE VARIABLES, YOU CAN EXECUTE THE
+   BLOCK WHICH CALCULATES/DERIVES THE
+   "overdue amount," AND STORES IT IN THE 
+   p_ovr_due_amt CLIENT-SIDE VARIABLE. */
