@@ -2396,6 +2396,8 @@ FUNCTION get_invoice_xml
         else
           v_due_date_adjustment := 0;
         end if;
+	--
+	log('d','Calculated v_due_date_adjustment is:  '||to_char(v_due_date_adjustment,'tm9'));
       end;
 
       -- Calculate the current open balance for the customer
