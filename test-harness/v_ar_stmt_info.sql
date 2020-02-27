@@ -37,7 +37,12 @@ from
 , lwx.lwx_ar_stmt_line_details sd
 where
     sh.stmt_hdr_id = sl.stmt_hdr_id
-and sl.stmt_line_id = sd.stmt_line_id
+-- The following needs to be an outer-join predicate
+-- because statement-generation does not necessarily
+-- create a corresponding set of lwx_ar_stmt_line_details
+-- rows, but can/does create lwx_ar_stmt_headers rows
+-- and corresponding lwx_ar_stmt_lines rows!
+and sl.stmt_line_id = sd.stmt_line_id(+)
 ;
 
 rem grant select on v_ar_stmt_info to apps;
