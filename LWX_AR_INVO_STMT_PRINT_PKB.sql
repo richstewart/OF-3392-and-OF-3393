@@ -3176,6 +3176,17 @@ FUNCTION get_invoice_xml
          AND ((--Non Prepay items use regular date logic
                  get_prepay(LASL.PAYMENT_SCHEDULE_ID,'N','Y') IS NULL
          AND (greatest(trunc(LASL.due_dte),nvl(trunc(trx.creation_date),trunc(LASL.due_dte))) + v_due_date_adjustment)
+-- [2020-02-28 Fri 15:27]	 
+-- SOMETHING ELSE IS NECESSARY HERE?  TO PREVENT ITEMS CREATED BEFORE TODAY'S DATE FROM BEING PUSHED OUT INTO THE FUTURE?
+-- BUT I THOUGHT THAT WAS THE ENTIRE POINT OF ADDING THE v_due_date_adjustment TO THE VARIOUS "due-date" VALUES:
+-- TO "MAKE THEM LATER," AND THUS PREVENT THEM FROM BEING INCLUDED IN THE "TOTAL OF WHAT IS DUE/OVERDUE," ETC.
+-- I kept asking gwright how it is that the line-items are determined to be "paid-off" or "not-paid-off" and
+-- thence how they're considered "overdue" or merely "due."
+-- Until I have *lots* more clarity about what it means for an item to be considered "overdue," and
+-- especially in the context of the statement-generation process, we have some more wood-shedding to do
+-- with this statement-generation issue.
+-- gwright and I had some back-and-forth about this, and now it seems that he's not sure that what we've done
+-- here is the entirely appropriate thing to do.
                      BETWEEN TRUNC(v_last_stmt_date_global) AND v_statement_date_global)
                 OR 
                 (-- Prepay items should be consider due on first move into F3 section
