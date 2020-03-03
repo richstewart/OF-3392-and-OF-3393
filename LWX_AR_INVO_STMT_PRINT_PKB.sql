@@ -2356,13 +2356,56 @@ FUNCTION get_invoice_xml
       log('d',v_process_stage);
 
       BEGIN
-
-        SELECT TRUNC(NVL(MAX(ash.STMT_DTE), v_statement_date_global - 30))
-          INTO v_last_stmt_date_global
-          FROM LWX_AR_STMT_HEADERS ash, HZ_CUST_ACCOUNTS CUST
-         WHERE CUST.CUST_ACCOUNT_ID = v_customer_rec.CUSTOMER_ID
-           AND ash.SEND_TO_CUST_NBR = CUST.ACCOUNT_NUMBER;
-
+        select
+          case
+            when u.preceding_stmt_date is null
+            then u.creation_date
+            else u.preceding_stmt_date
+          end
+          into v_last_stmt_date_global
+        from
+          (
+            select
+              t.*
+            from
+              (
+                -- Calculate, for each possible (customer, statement-date) pairing,
+                -- the:
+                --   date of the preceding statement (if it exists)
+                --   the latest statement-date of all statements created for the customer
+                -- The enclosing query block needs both these values.
+                select
+                  cust.account_number
+                , cust.cust_account_id
+                , ash.stmt_dte
+                , cust.creation_date
+                -- This calculates the latest preceding statement date, and
+                -- this will be null if there is not a preceding statement,
+                -- i.e., when the row from lwx_ar_stmt_headers represents
+                -- that of the only statement.
+                , last_value(ash.stmt_dte)
+                  over (partition by cust.cust_account_id
+                        order by ash.stmt_dte
+                        rows between unbounded preceding and 1 preceding)
+                  preceding_stmt_date
+                -- This is the latest statement-date of all statements created for the customer.
+                , max(ash.stmt_dte)
+                  over (partition by cust.cust_account_id)
+                  latest_stmt_dte
+                from
+                  lwx_ar_stmt_headers ash
+                , hz_cust_accounts cust
+                where
+                    cust.cust_account_id = v_customer_rec.customer_id -- :customer_id
+                and ash.send_to_cust_nbr = cust.account_number
+              ) t
+            where
+            -- Since in general it's possible for there to be many statements per
+            -- customer, we need to be sure to pick out that row of the enclosed
+            -- query block which is for the latest statement.
+                t.stmt_dte = t.latest_stmt_dte
+          ) u
+        ;
       EXCEPTION
         WHEN NO_DATA_FOUND THEN
           v_last_stmt_date_global := NVL(v_statement_date_global, SYSDATE) - 30;
