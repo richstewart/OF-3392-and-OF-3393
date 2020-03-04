@@ -72,16 +72,6 @@ CREATE OR REPLACE PACKAGE LWX_AR_INVO_STMT_PRINT AS
 ---  2018-04-11  Greg Wright               OF-2934 - Provide the ability to receive a formatted address with
 ---                                        the addressee appended to the front.
 --- 2018-07-24   Greg Wright               OF-3086 - Accomodate Multiple party sites with same location ID.
----  2020-02-18   Rich Stewart             OF-3393 Change use of due dates in statement generation:
----                                        delay the due date of payments by the amount by which the difference
----                                        between the statement date and preceding/last statement date exceeds 30
----                                        days.  I.e., when the statement date and preceding/last statement date
----                                        are between 30 and 40 days apart, then delay the due date by the amount
----                                          "statement date" - ("preceding/last statement date" + "30 days")
----                                        This delay/adjustment amount is added to the line-item due-date when
----                                        comparing it to the "statement date" wherever the program is choosing line-item
----                                        amounts to add to the "overdue amount."
----                                        This v_due_date_adjustment is a package-level global variable defined here.
 --- ***************************************************************************************************************
 
    -- Declaration of Record Type for the Cursors
