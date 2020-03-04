@@ -2358,57 +2358,54 @@ FUNCTION get_invoice_xml
       BEGIN
         select
           case
-            when u.preceding_stmt_date is null
-            then u.creation_date
-            else u.preceding_stmt_date
+            when latest_stmt_date is null
+            then creation_date
+            else latest_stmt_date
           end
           into v_last_stmt_date_global
         from
           (
+            -- Calculate, for each possible (customer, statement-date) pairing,
+            -- the:
+            --   customer-account creation date
+            --   the latest statement-date of all statements created for the customer
+            -- The enclosing query block needs both these values.
+            -- Since the cust.cust_account_id is the primary key of hz_cust_accounts,
+            -- this query block is guaranteed to return precisely one row, since
+            -- that column is used in the group-by aggregation.
             select
-              t.*
+              cust.account_number
+            , cust.cust_account_id
+            , cust.creation_date
+            -- If there are not any past statements at all, then this
+            -- expression will yield null, and the enclosing query block
+            -- will substitute the cust.creation_date in its place.
+            , max(ash.stmt_dte) latest_stmt_date
             from
-              (
-                -- Calculate, for each possible (customer, statement-date) pairing,
-                -- the:
-                --   date of the preceding statement (if it exists)
-                --   the latest statement-date of all statements created for the customer
-                -- The enclosing query block needs both these values.
-                select
-                  cust.account_number
-                , cust.cust_account_id
-                , ash.stmt_dte
-                , cust.creation_date
-                -- This calculates the latest preceding statement date, and
-                -- this will be null if there is not a preceding statement,
-                -- i.e., when the row from lwx_ar_stmt_headers represents
-                -- that of the only statement.
-                , last_value(ash.stmt_dte)
-                  over (partition by cust.cust_account_id
-                        order by ash.stmt_dte
-                        rows between unbounded preceding and 1 preceding)
-                  preceding_stmt_date
-                -- This is the latest statement-date of all statements created for the customer.
-                , max(ash.stmt_dte)
-                  over (partition by cust.cust_account_id)
-                  latest_stmt_dte
-                from
-                  lwx_ar_stmt_headers ash
-                , hz_cust_accounts cust
-                where
-                    cust.cust_account_id = v_customer_rec.customer_id -- :customer_id
-                and ash.send_to_cust_nbr = cust.account_number
-              ) t
+              lwx_ar_stmt_headers ash
+            , hz_cust_accounts cust
             where
-            -- Since in general it's possible for there to be many statements per
-            -- customer, we need to be sure to pick out that row of the enclosed
-            -- query block which is for the latest statement.
-                t.stmt_dte = t.latest_stmt_dte
-          ) u
-        ;
+                cust.cust_account_id = v_customer_rec.customer_id -- :customer_id
+            and cust.account_number = ash.send_to_cust_nbr(+) -- outer join as we are not guaranteed past statements exist.
+            group by
+              cust.account_number
+            , cust.cust_account_id
+            , cust.creation_date
+          )
+          ;
       EXCEPTION
         WHEN NO_DATA_FOUND THEN
-          v_last_stmt_date_global := NVL(v_statement_date_global, SYSDATE) - 30;
+          -- This really should NOT happen, and should be a considered a catastrophic
+          -- kind of problem.  The only way this would happen is if the
+          -- customer_id value retrieved from the hz_cust_accounts itself
+          -- had disappeared from the hz_cust_accounts between the time the
+          -- v_customer_rec cursor's query had started and the above query block
+          -- had been exected.
+          v_process_stage :=
+            '****** No customer-data found for current customer id:  '||
+              to_char(v_customer_rec.customer_id)||
+              ', when trying to find "latest statement date".  Please check previous messages.';
+          raise v_when_others;
         WHEN OTHERS THEN
           --Raise the user defined exception
           RAISE v_when_others;
