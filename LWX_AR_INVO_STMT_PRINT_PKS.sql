@@ -72,6 +72,9 @@ CREATE OR REPLACE PACKAGE LWX_AR_INVO_STMT_PRINT AS
 ---  2018-04-11  Greg Wright               OF-2934 - Provide the ability to receive a formatted address with
 ---                                        the addressee appended to the front.
 --- 2018-07-24   Greg Wright               OF-3086 - Accomodate Multiple party sites with same location ID.
+--- 2020-03-04   Rich Stewart              OF-3392 Change to the calculation of the last preceding statement to
+---                                        the customer-account's creation_date as the latest preceding statement
+---                                        date in the case of a customer who has no preceding statements.
 --- ***************************************************************************************************************
 
    -- Declaration of Record Type for the Cursors
