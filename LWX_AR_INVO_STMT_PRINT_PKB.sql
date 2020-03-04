@@ -1883,7 +1883,10 @@ FUNCTION get_invoice_xml
     ---                                           Also changes for performance, proceduralized and readability
     ---  2010-02-24   Jason McCleskey          P-1725 - Do not consolidate Prospect Services (Lexinet) invoices (Sales Channel = 'PS')    
     ---  2012-01-13   Greg Wright              Prevents consolidation of invoices when language='Es'.
-    ---  2017-08-15   Greg Wright              OF-2899 Flash Commerce    
+    ---  2017-08-15   Greg Wright              OF-2899 Flash Commerce
+    ---  2020-03-04   Rich Stewart             OF-3392 Change to the calculation of the last preceding statement to
+    ---                                        the customer-account's creation_date as the latest preceding statement
+    ---                                        date in the case of a customer who has no preceding statements.
     --- ***************************************************************************************************************
 
     -- Local varibles declaration
