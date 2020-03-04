@@ -1,3 +1,4 @@
+-- -*- indent-tabs-mode: nil tab-width: 4 -*-
 CREATE OR REPLACE PACKAGE BODY lwx_ar_invo_stmt_print AS
   --- ***************************************************************************************************************
   ---$Id: LWX_AR_INVO_STMT_PRINT_PKB.sql,v 1.117 2019/01/25 23:19:02 gwright Exp $
@@ -2406,29 +2407,6 @@ FUNCTION get_invoice_xml
       log('d','Last Statement Date Determined: ' ||
                 TO_CHAR(v_last_stmt_date_global, 'DD-MON-YYYY'));
 
-      -- Calculation of the due-date adjustment:
-      declare
-        date_distance_adjusted number := 0;
-      begin
-        date_distance_adjusted :=
-          v_statement_date_global - (v_last_stmt_date_global + 30);
-        --
-        -- Effectively, if the "current statement date" and the "last statement date"
-        -- are between 30 and 40 days apart, then we want to adjust the line item
-        -- due date by the amount for which the difference between the dates exceeds
-        -- 30 days.  And otherwise, the due-date should not be adjusted at all, i.e.,
-        -- the adjustment must be 0.
-        if     0 <= date_distance_adjusted
-           and      date_distance_adjusted <= 10
-        then
-          v_due_date_adjustment := date_distance_adjusted;
-        else
-          v_due_date_adjustment := 0;
-        end if;
-	--
-	log('d','Calculated v_due_date_adjustment is:  '||to_char(v_due_date_adjustment,'tm9'));
-      end;
-
       -- Calculate the current open balance for the customer
       v_process_stage := 'Get the Current Open Balance for the Customer Id: ' ||
                          TO_CHAR(v_customer_rec.CUSTOMER_ID);
@@ -3151,8 +3129,10 @@ FUNCTION get_invoice_xml
                    AND REC_TYPE_CDE = 'F3' 
                    AND OUTSTND_AMT >= 0 
                    AND SL.CUSTOMER_TRX_ID = TRX.CUSTOMER_TRX_ID(+) 
-                   AND (TRUNC(GREATEST(SL.DUE_DTE, NVL(TRX.CREATION_DATE, SL.DUE_DTE))) + v_due_date_adjustment)
+-- THIS IS THE PREDICATE WHICH MR. WRIGHT SAYS OUGTTA CHANGE, EH?
+                   AND TRUNC(GREATEST(SL.DUE_DTE, NVL(TRX.CREATION_DATE, SL.DUE_DTE))) 
                               < TRUNC(v_last_stmt_date_global)
+--
                    AND (CASE trx.attribute5
                           WHEN 'ET' THEN lwx_ar_query.get_wo_gift_card_receipt(sl.PAYMENT_SCHEDULE_ID)
                           WHEN 'WO' THEN lwx_ar_query.get_wo_gift_card_receipt(sl.PAYMENT_SCHEDULE_ID)
@@ -3204,18 +3184,7 @@ FUNCTION get_invoice_xml
          AND OUTSTND_AMT >= 0 -- Jude Lam 09/21/06 Added this because all credit items are included in over due amt section.
          AND ((--Non Prepay items use regular date logic
                  get_prepay(LASL.PAYMENT_SCHEDULE_ID,'N','Y') IS NULL
-         AND (greatest(trunc(LASL.due_dte),nvl(trunc(trx.creation_date),trunc(LASL.due_dte))) + v_due_date_adjustment)
--- [2020-02-28 Fri 15:27]	 
--- SOMETHING ELSE IS NECESSARY HERE?  TO PREVENT ITEMS CREATED BEFORE TODAY'S DATE FROM BEING PUSHED OUT INTO THE FUTURE?
--- BUT I THOUGHT THAT WAS THE ENTIRE POINT OF ADDING THE v_due_date_adjustment TO THE VARIOUS "due-date" VALUES:
--- TO "MAKE THEM LATER," AND THUS PREVENT THEM FROM BEING INCLUDED IN THE "TOTAL OF WHAT IS DUE/OVERDUE," ETC.
--- I kept asking gwright how it is that the line-items are determined to be "paid-off" or "not-paid-off" and
--- thence how they're considered "overdue" or merely "due."
--- Until I have *lots* more clarity about what it means for an item to be considered "overdue," and
--- especially in the context of the statement-generation process, we have some more wood-shedding to do
--- with this statement-generation issue.
--- gwright and I had some back-and-forth about this, and now it seems that he's not sure that what we've done
--- here is the entirely appropriate thing to do.
+         AND greatest(trunc(LASL.due_dte),nvl(trunc(trx.creation_date),trunc(LASL.due_dte))) 
                      BETWEEN TRUNC(v_last_stmt_date_global) AND v_statement_date_global)
                 OR 
                 (-- Prepay items should be consider due on first move into F3 section
@@ -3254,7 +3223,7 @@ FUNCTION get_invoice_xml
                  WHERE STMT_HDR_ID = v_stmt_header_id
                    AND REC_TYPE_CDE = 'F3'
                    AND OUTSTND_AMT >= 0
-                   AND (DUE_DTE + v_due_date_adjustment) <= v_statement_date_global
+                   AND DUE_DTE <= v_statement_date_global
                 ) dbt,
                (SELECT nvl(SUM(nvl(LASL2.OUTSTND_AMT, 0)), 0) CRE_AMT
                   FROM LWX_AR_STMT_LINES LASL2
@@ -3295,7 +3264,7 @@ FUNCTION get_invoice_xml
          WHERE STMT_HDR_ID = v_stmt_header_id
            AND REC_TYPE_CDE = 'F3'
            AND TOTAL_DUE_AMT >= 0
-           AND (DUE_DTE + v_due_date_adjustment) > v_statement_date_global;
+           AND DUE_DTE > v_statement_date_global;
 
         log('d','No Due Amount ' ||
                   to_char(v_no_due_amt, '999,999,999,990.00'));
@@ -3737,7 +3706,7 @@ FUNCTION get_invoice_xml
               ' Mkt Message4 Name ' || v_mkt_msg4_nme);
 
     -- Get the current statement indicator
-    IF (nvl(trunc(v_due_dte), trunc(v_trans_dte)) + v_due_date_adjustment) <= v_statement_date_global THEN
+    IF nvl(trunc(v_due_dte), trunc(v_trans_dte)) <= v_statement_date_global THEN
       v_incl_cur_stmt_ind := 'Y';
     ELSE
       v_incl_cur_stmt_ind := 'N';
@@ -4052,7 +4021,7 @@ FUNCTION get_invoice_xml
     -- Get the current statement indicator
     v_process_stage := 'Get the Current Statement Indicator';
 
-    IF (nvl(trunc(v_due_dte), trunc(v_trans_dte)) + v_due_date_adjustment) <= v_statement_date_global THEN
+    IF nvl(trunc(v_due_dte), trunc(v_trans_dte)) <= v_statement_date_global THEN
       v_incl_cur_stmt_ind := 'Y';
     ELSE
       v_incl_cur_stmt_ind := 'N';
@@ -9622,10 +9591,3 @@ FUNCTION get_invoice_xml
 
 END lwx_ar_invo_stmt_print;
 /
-
-/*
-Local Variables:
-indent-tabs-mode: nil
-tab-width: 4
-End:
-*/
