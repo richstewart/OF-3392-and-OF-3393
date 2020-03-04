@@ -1,4 +1,3 @@
--- -*- indent-tabs-mode: nil tab-width: 4 -*-
 CREATE OR REPLACE PACKAGE BODY lwx_ar_invo_stmt_print AS
   --- ***************************************************************************************************************
   ---$Id: LWX_AR_INVO_STMT_PRINT_PKB.sql,v 1.117 2019/01/25 23:19:02 gwright Exp $
