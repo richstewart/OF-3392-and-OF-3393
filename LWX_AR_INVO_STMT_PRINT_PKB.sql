@@ -2350,7 +2350,7 @@ FUNCTION get_invoice_xml
 
       BEGIN
         select
-          max(ash.stmt_dte)
+          nvl(max(ash.stmt_dte), v_customer_rec.creation_date)
         into
           v_last_stmt_date_global
         from
