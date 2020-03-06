@@ -246,4 +246,4 @@ select psa.trx_number,
        psa.amount_due_remaining
 from   ar.ar_payment_schedules_all   psa
 where  psa.customer_id = :p_customer_id -- 22430178
-and    psa.status = 'OP'o
+and    psa.status = 'OP'
