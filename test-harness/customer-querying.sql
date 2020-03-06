@@ -14,6 +14,7 @@ from(
              null LANGUAGE,
              hcp.SITE_USE_ID,
              ac.cust_account_id CUSTOMER_ID,
+	     ac.creation_date, -- needed as a substitute for the "last statement date" when there are no past statements
              ac.account_number CUSTOMER_NUMBER,
              hp.party_name CUSTOMER_NAME,
              ac.PARTY_ID,
@@ -206,3 +207,43 @@ end;
    BLOCK WHICH CALCULATES/DERIVES THE
    "overdue amount," AND STORES IT IN THE 
    p_ovr_due_amt CLIENT-SIDE VARIABLE. */
+
+-- ********************************************************************************
+
+
+/*
+[2020-03-05 Thu 15:32] Greg Wright said:
+"DEV was cloned from the 12/18/2019 version of PROD so this query should identify 
+customers who were new at that time and had transactions but had never received a
+statement:"
+*/
+select hca.account_number,
+       hca.cust_account_id,
+       hca.creation_date,
+       lwx_ar_query.get_balance(hca.cust_account_id,'NO') bal
+from   ar.hz_cust_accounts    hca,
+       ar.hz_customer_profiles hcp
+where  hca.creation_date >= to_date('01-NOV-2019','DD-MON-YYYY')
+and    hca.cust_account_id = hcp.cust_account_id
+and    hcp.site_use_id is null
+and    lwx_ar_query.get_balance(hca.cust_account_id,'NO') <> 0
+and    hca.account_number not in
+(
+select sh.send_to_cust_nbr
+from   lwx.lwx_ar_stmt_headers sh
+where  sh.send_to_cust_nbr = hca.account_number)
+;
+
+
+/*
+Greg continued:
+After you pick a customer you can run it through this query to see what he has: 
+*/
+select psa.trx_number,
+       psa.due_date,
+       psa.class,
+       psa.amount_due_original,
+       psa.amount_due_remaining
+from   ar.ar_payment_schedules_all   psa
+where  psa.customer_id = :p_customer_id -- 22430178
+and    psa.status = 'OP'o
