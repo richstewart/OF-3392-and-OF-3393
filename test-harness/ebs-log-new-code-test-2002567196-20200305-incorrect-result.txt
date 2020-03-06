@@ -1,0 +1,50 @@
++---------------------------------------------------------------------------+
+LifeWay Custom Extensions: Version : UNKNOWN
+
+Copyright (c) 1979, 1999, Oracle Corporation. All rights reserved.
+
+LWXARCSGP module: LWX AR Consolidated Statement Generation Program
++---------------------------------------------------------------------------+
+
+Current system time is 05-MAR-2020 17:45:30
+
++---------------------------------------------------------------------------+
+
+**Starts**05-MAR-2020 17:45:30
+**Ends**05-MAR-2020 17:45:30
++---------------------------------------------------------------------------+
+Start of log messages from FND_FILE
++---------------------------------------------------------------------------+
+Start processing Statement with ORG_ID: 102
+Processing Customer Number 2002567196
+Processing Customer Email None
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Inside v_customer_Cur: customer id: 22438432 SITE_USE_ID:  customer name: JACOB BOYD
+Determine the Statement As of Date.  The Statement As of Date passed: 2020/03/05 00:00:00 and v_customer_statement_cycle_id: 3000 for sysdate: 03/05/2020
+Statement Date Determined: 03/05/2020 23:59:59
+Get the Last Statement Date for the Current Customer ID: 22438432
+Last Statement Date Determined: 
+Open Balance for the customer:            199.99
+Days since last statement for customer: 
+End of v_customer_Cur: for customer id: 22438432
+End Customer 2002567196
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Start of Lwx_Data_File_Phase Procedure
+Start of F1 Type Header Record Loop...
++---------------------------------------------------------------------------+
+End of log messages from FND_FILE
++---------------------------------------------------------------------------+
+
+
++---------------------------------------------------------------------------+
+No completion options were requested.
+
+Output file size: 
+0
+
++---------------------------------------------------------------------------+
+Concurrent request completed successfully
+Current system time is 05-MAR-2020 17:45:30
+
++---------------------------------------------------------------------------+
+
