@@ -75,6 +75,7 @@ CREATE OR REPLACE PACKAGE LWX_AR_INVO_STMT_PRINT AS
 --- 2020-03-04   Rich Stewart              OF-3392 Change to the calculation of the last preceding statement to
 ---                                        the customer-account's creation_date as the latest preceding statement
 ---                                        date in the case of a customer who has no preceding statements.
+---                                        Prevents such customers from having their outstanding amounts counted as "overdue."
 --- ***************************************************************************************************************
 
    -- Declaration of Record Type for the Cursors
