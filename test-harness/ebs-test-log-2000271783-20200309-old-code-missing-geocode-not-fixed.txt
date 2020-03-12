@@ -1,0 +1,52 @@
++---------------------------------------------------------------------------+
+LifeWay Custom Extensions: Version : UNKNOWN
+
+Copyright (c) 1979, 1999, Oracle Corporation. All rights reserved.
+
+LWXARCSGP module: LWX AR Consolidated Statement Generation Program
++---------------------------------------------------------------------------+
+
+Current system time is 09-MAR-2020 17:54:00
+
++---------------------------------------------------------------------------+
+
+**Starts**09-MAR-2020 17:54:00
+**Ends**09-MAR-2020 17:54:11
++---------------------------------------------------------------------------+
+Start of log messages from FND_FILE
++---------------------------------------------------------------------------+
+Start processing Statement with ORG_ID: 102
+Processing Customer Number 2000271783
+Processing Customer Email None
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Inside v_customer_Cur: customer id: 1779464 SITE_USE_ID:  customer name: Central Baptist Church
+Determine the Statement As of Date.  The Statement As of Date passed: 2020/03/09 00:00:00 and v_customer_statement_cycle_id: 1001 for sysdate: 03/09/2020
+Statement Date Determined: 03/09/2020 23:59:59
+Get the Last Statement Date for the Current Customer ID: 1779464
+Last Statement Date Determined: 08-FEB-2020
+Open Balance for the customer:            840.00
+Days since last statement for customer:     30
+*** Warning: Primary Bill_To Site Address not found
+*** Warning: Please fix the Primary Bill_To Site Details for customer number: 2000271783 Customer Skipped
+End of v_customer_Cur: for customer id: 1779464
+End Customer 2000271783
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Start of Lwx_Data_File_Phase Procedure
+Start of F1 Type Header Record Loop...
++---------------------------------------------------------------------------+
+End of log messages from FND_FILE
++---------------------------------------------------------------------------+
+
+
++---------------------------------------------------------------------------+
+No completion options were requested.
+
+Output file size: 
+0
+
++---------------------------------------------------------------------------+
+Concurrent request completed successfully
+Current system time is 09-MAR-2020 17:54:11
+
++---------------------------------------------------------------------------+
+

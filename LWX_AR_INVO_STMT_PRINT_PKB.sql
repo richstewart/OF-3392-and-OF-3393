@@ -267,8 +267,9 @@ CREATE OR REPLACE PACKAGE BODY lwx_ar_invo_stmt_print AS
   ---                                            they need an indicator for foreign statement addresses.
   --- 2018-07-24   Greg Wright         OF-3086 - Accomodate Multiple party sites with same location ID.
   --- 2019-01-25   Greg Wright         OF-3186 expect two programs for each BPA call instead of three.
-  --- 2020-02-18   Rich Stewart        OF-3392 Changes to due-date handling, affecting procedure Generate_Con_Stmt
-  ---                                  and procedure Lwx_Ar_Build_F3_Type_Rec.
+  --- 2020-03-10   Rich Stewart        OF-3392 Changes to calculation of the latest-preceding-statement-date,
+  ---                                          in order to prevent customers who have never received a statement
+  ---                                          from having their outstanding amounts counted as overdue.
   --- 2020-02-18   Rich Stewart        OF-3393 changes to take addresses with missing geocodes into account
   ---                                          within the get_site_info procedure, called from the Generate_Con_Stmt,
   ---                                          and avoid causing the Generate_Con_Stmt to generate unnecessary warnings.
@@ -1887,6 +1888,7 @@ FUNCTION get_invoice_xml
     ---  2020-03-04   Rich Stewart             OF-3392 Change to the calculation of the last preceding statement to
     ---                                        the customer-account's creation_date as the latest preceding statement
     ---                                        date in the case of a customer who has no preceding statements.
+    ---                                        Prevents such customers from having their outstanding amounts counted as "overdue."
     --- ***************************************************************************************************************
 
     -- Local varibles declaration
