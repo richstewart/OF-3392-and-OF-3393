@@ -1,0 +1,113 @@
++---------------------------------------------------------------------------+
+LifeWay Custom Extensions: Version : UNKNOWN
+
+Copyright (c) 1979, 1999, Oracle Corporation. All rights reserved.
+
+LWXARCSGP module: LWX AR Consolidated Statement Generation Program
++---------------------------------------------------------------------------+
+
+Current system time is 06-MAR-2020 12:31:33
+
++---------------------------------------------------------------------------+
+
+**Starts**06-MAR-2020 12:31:33
+**Ends**06-MAR-2020 12:31:33
++---------------------------------------------------------------------------+
+Start of log messages from FND_FILE
++---------------------------------------------------------------------------+
+Start processing Statement with ORG_ID: 102
+Processing Customer Number 2002567196
+Processing Customer Email None
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Inside v_customer_Cur: customer id: 22438432 SITE_USE_ID:  customer name: JACOB BOYD
+Determine the Statement As of Date.  The Statement As of Date passed: 2020/03/07 00:00:00 and v_customer_statement_cycle_id: 3000 for sysdate: 03/06/2020
+Statement Date Determined: 03/07/2020 23:59:59
+Get the Last Statement Date for the Current Customer ID: 22438432
+Last Statement Date Determined: 06-FEB-2020
+Open Balance for the customer:            199.99
+Days since last statement for customer:     30
+CUST_ACCT_SITE_ID 4719795
+Customer Consolidated Statement flag: Y
+Statement Summary Message1 
+Statement Summary Message2 
+Sales Channel Code SG
+Logo Code RC
+CUST_ACCT_SITE_ID 4719795
+Cust_Email_Adr NULL
+Collector ID 1000 Collectors Telephone Number 1-800-453-9775 Collectors Email Address CustomerAccounts@LifeWay.com Collectors Fax Number (615) 251-3914
+v_stmt_header_id: 8505111
+*** Inside v_openitem_cur loop for customer id: 22438432 for ps schedule id: 37841087 Class: INV Customer Trx ID 27880971 Sales Channel code: SG Type: INV
+Start of Lwx_Ar_Build_F3_Type_Rec Procedure
+Inside Lwx_Ar_Build_F3_Type_Rec Procedure  Record Type Code F3 Customer Transaction ID 27880971 Cash Receipt ID  Payment Schedule ID 37841087 Transaction Date 04-FEB-20 Transaction Number 28619289(15347856) Sales Channel Name SG Customer Reference Name 24B1-774F-0957 Document Reference Name 28619289(15347856) Original Amount 199.99 Due Date 04-FEB-20 Outstanding Amount 199.99 Mkt Message1 Name  Mkt Message2 Name  Mkt Message3 Name  Mkt Message4 Name 
+Sales Channel Code SG
+Logo Code RC
+Document Type Name Invoice
+Checking due_date and statement date for future payment ind. with due date: 04-FEB-2020 00:00:00 and v_statement_date_global: 07-MAR-2020 23:59:59
+Outstanding Amount              199.99
+Sub Total Amount              199.99
+Ship Handling Amount                0.00
+Tax Amount                0.00
+Payment Used Amount                0.00
+Total Due Amout:              199.99
+End of Lwx_Ar_Build_F3_Type_Rec Procedure
+Customer Trx ID: 27880971 Term Count 1
+Previous Statment Run Count 0 for customer_trx_id: 27880971
+End of v_openitem_cur loop for customer id: 22438432
+Total F2 Type Records 0
+Total F3 Type Records 1
+Total F4 Type Records 1
+Over due Amount              199.99
+Transaction Due Amount                0.00
+Payment Amount              199.99
+Start of Lwx_Stmt_Scanned_Line_Logic Procedure
+Start of Lwx_Get_Check_Digit Procedure
+v_build_string 111112002567196000019999000000000
+v_build_string length 33
+ v_process_stage Extract Odd and Even Digits
+Check Digit 0
+End of Lwx_Get_Check_Digit Procedure
+Scanned Line 1111120025671960000199990000000000
+Scanned Line Length 34
+End of Lwx_Stmt_Scanned_Line_Logic Procedure
+No Due Amount                0.00
+Balance Amount              199.99
+Update the Statement Header Level Informations
+Update the LWX_AR_STMT_HEADERS table header id 8505111 PPD Page Count 0 Detail Page Count 1 Invoice Page Count 0 Total Page Count 2 Over Due Amount 199.99 Due Amount 0 To Payment Amount 199.99 Not Due Amount 0 Balance Amount 199.99
+End of v_customer_Cur: for customer id: 22438432
+End Customer 2002567196
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Start of Lwx_Data_File_Phase Procedure
+Start of F1 Type Header Record Loop...
+Inside v_ar_stmt_hdr_f1_cur: Concurrent Request id: 130867641 Statement Header ID: 8505111
+Building F1 Type Record Line #1 Field Values VA2002567196F1                10000000|0000000|0000001|0000000|0000002|RC|03-06-20|2002567196|JACOB BOYD|
+Calling Format_Address for F1 Type 2 and 3 address fields.VA2002567196F1                20000000|7300 Gary Street|Springfield VA 22150|
+Building F1 Type Record Line #3 Field Values VA2002567196F1                30000000||||
+Building F1 Type Record Line #4 Field Values VA2002567196F1                40000000|1-800-453-9775|199.99|0.00|199.99|04-01-20|0.00|199.99|
+Building F1 Type Record Line #5 Field Values VA2002567196F1                50000000|||
+Building F1 Type Record Line #6 Field Values VA2002567196F1                60000000|1111120025671960000199990000000000|
+Building F1 Type Record Line #7 Field Values VA2002567196F1                70000000|(615) 251-3914|CustomerAccounts@LifeWay.com|N|N|N|N|
+F3 Record total page1
+Calling Format_Address for F3 Type 1 Field 7 - 10.VA2002567196F3                10000000|1|1|RC|03-06-20|2002567196|JACOB BOYD|7300 Gary Street|Springfield VA 22150||||
+Begin F3 Type Record Cursor Loop.
+Inside v_ar_stmt_lines_f3_cur: Statement Header id: 8505111
+Building 38 Character Sort Key for F3 Type Record Line #2.
+Data_File_Phase: Checking batch source for customer_trx_id: 27880971
+Data_File_Phase: Batch source name retrieved for customer_trx_id: 27880971 is: Order Management
+Retrieve sales channel description using sales channel code: SGVA2002567196F3                20000001|N|02-04-20|Invoice|SmallGroup.com|24B1-774F-0957|||02-04-20|28619289(15347856)|199.99|199.99|
+Begin F4 Type Record Cursor Loop.
++---------------------------------------------------------------------------+
+End of log messages from FND_FILE
++---------------------------------------------------------------------------+
+
+
++---------------------------------------------------------------------------+
+No completion options were requested.
+
+Output file size: 
+783
+
++---------------------------------------------------------------------------+
+Concurrent request completed successfully
+Current system time is 06-MAR-2020 12:31:33
+
++---------------------------------------------------------------------------+

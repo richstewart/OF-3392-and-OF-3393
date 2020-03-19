@@ -267,8 +267,9 @@ CREATE OR REPLACE PACKAGE BODY lwx_ar_invo_stmt_print AS
   ---                                            they need an indicator for foreign statement addresses.
   --- 2018-07-24   Greg Wright         OF-3086 - Accomodate Multiple party sites with same location ID.
   --- 2019-01-25   Greg Wright         OF-3186 expect two programs for each BPA call instead of three.
-  --- 2020-02-18   Rich Stewart        OF-3392 Changes to due-date handling, affecting procedure Generate_Con_Stmt
-  ---                                  and procedure Lwx_Ar_Build_F3_Type_Rec.
+  --- 2020-03-10   Rich Stewart        OF-3392 Changes to calculation of the latest-preceding-statement-date,
+  ---                                          in order to prevent customers who have never received a statement
+  ---                                          from having their outstanding amounts counted as overdue.
   --- 2020-02-18   Rich Stewart        OF-3393 changes to take addresses with missing geocodes into account
   ---                                          within the get_site_info procedure, called from the Generate_Con_Stmt,
   ---                                          and avoid causing the Generate_Con_Stmt to generate unnecessary warnings.
@@ -1884,17 +1885,10 @@ FUNCTION get_invoice_xml
     ---  2010-02-24   Jason McCleskey          P-1725 - Do not consolidate Prospect Services (Lexinet) invoices (Sales Channel = 'PS')    
     ---  2012-01-13   Greg Wright              Prevents consolidation of invoices when language='Es'.
     ---  2017-08-15   Greg Wright              OF-2899 Flash Commerce
-    ---  2020-02-18   Rich Stewart             OF-3392 Change use of due dates in statement generation:
-    ---                                        delay the due date of payments by the amount by which the difference
-    ---                                        between the statement date and preceding/last statement date exceeds 30
-    ---                                        days.  I.e., when the statement date and preceding/last statement date
-    ---                                        are between 30 and 40 days apart, then delay the due date by the amount
-    ---                                          "statement date" - ("preceding/last statement date" + "30 days")
-    ---                                        This delay/adjustment amount is added to the line-item due-date when
-    ---                                        comparing it to the "statement date" wherever the program is choosing line-item
-    ---                                        amounts to add to the "overdue amount."
-    ---                                        This v_due_date_adjustment is a package-level global variable calculated
-    ---                                        here.
+    ---  2020-03-04   Rich Stewart             OF-3392 Change to the calculation of the last preceding statement to
+    ---                                        the customer-account's creation_date as the latest preceding statement
+    ---                                        date in the case of a customer who has no preceding statements.
+    ---                                        Prevents such customers from having their outstanding amounts counted as "overdue."
     --- ***************************************************************************************************************
 
     -- Local varibles declaration
@@ -1973,6 +1967,7 @@ FUNCTION get_invoice_xml
              null LANGUAGE,
              hcp.SITE_USE_ID,
              ac.cust_account_id CUSTOMER_ID,
+             ac.creation_date, -- needed as a substitute for the "last statement date" when there are no past statements
              ac.account_number CUSTOMER_NUMBER,
              hp.party_name CUSTOMER_NAME,
              ac.PARTY_ID,
@@ -2356,16 +2351,22 @@ FUNCTION get_invoice_xml
       log('d',v_process_stage);
 
       BEGIN
-
-        SELECT TRUNC(NVL(MAX(ash.STMT_DTE), v_statement_date_global - 30))
-          INTO v_last_stmt_date_global
-          FROM LWX_AR_STMT_HEADERS ash, HZ_CUST_ACCOUNTS CUST
-         WHERE CUST.CUST_ACCOUNT_ID = v_customer_rec.CUSTOMER_ID
-           AND ash.SEND_TO_CUST_NBR = CUST.ACCOUNT_NUMBER;
-
+        select
+          nvl(max(ash.stmt_dte), v_customer_rec.creation_date)
+        into
+          v_last_stmt_date_global
+        from
+          lwx_ar_stmt_headers ash
+        where
+            ash.send_to_cust_nbr = v_customer_rec.customer_number
+        ;
       EXCEPTION
         WHEN NO_DATA_FOUND THEN
-          v_last_stmt_date_global := NVL(v_statement_date_global, SYSDATE) - 30;
+          -- When a previous statement does not exist for the
+          -- customer, we substitute the
+          --   hz_cust_accounts.creation_date
+          -- for the "last statement date."
+          v_last_stmt_date_global := v_customer_rec.creation_date;
         WHEN OTHERS THEN
           --Raise the user defined exception
           RAISE v_when_others;
@@ -2376,29 +2377,6 @@ FUNCTION get_invoice_xml
       -- Jude Lam 03/06/06
       log('d','Last Statement Date Determined: ' ||
                 TO_CHAR(v_last_stmt_date_global, 'DD-MON-YYYY'));
-
-      -- Calculation of the due-date adjustment:
-      declare
-        date_distance_adjusted number := 0;
-      begin
-        date_distance_adjusted :=
-          v_statement_date_global - (v_last_stmt_date_global + 30);
-        --
-        -- Effectively, if the "current statement date" and the "last statement date"
-        -- are between 30 and 40 days apart, then we want to adjust the line item
-        -- due date by the amount for which the difference between the dates exceeds
-        -- 30 days.  And otherwise, the due-date should not be adjusted at all, i.e.,
-        -- the adjustment must be 0.
-        if     0 <= date_distance_adjusted
-           and      date_distance_adjusted <= 10
-        then
-          v_due_date_adjustment := date_distance_adjusted;
-        else
-          v_due_date_adjustment := 0;
-        end if;
-	--
-	log('d','Calculated v_due_date_adjustment is:  '||to_char(v_due_date_adjustment,'tm9'));
-      end;
 
       -- Calculate the current open balance for the customer
       v_process_stage := 'Get the Current Open Balance for the Customer Id: ' ||
@@ -3122,7 +3100,7 @@ FUNCTION get_invoice_xml
                    AND REC_TYPE_CDE = 'F3' 
                    AND OUTSTND_AMT >= 0 
                    AND SL.CUSTOMER_TRX_ID = TRX.CUSTOMER_TRX_ID(+) 
-                   AND (TRUNC(GREATEST(SL.DUE_DTE, NVL(TRX.CREATION_DATE, SL.DUE_DTE))) + v_due_date_adjustment)
+                   AND TRUNC(GREATEST(SL.DUE_DTE, NVL(TRX.CREATION_DATE, SL.DUE_DTE))) 
                               < TRUNC(v_last_stmt_date_global)
                    AND (CASE trx.attribute5
                           WHEN 'ET' THEN lwx_ar_query.get_wo_gift_card_receipt(sl.PAYMENT_SCHEDULE_ID)
@@ -3175,7 +3153,7 @@ FUNCTION get_invoice_xml
          AND OUTSTND_AMT >= 0 -- Jude Lam 09/21/06 Added this because all credit items are included in over due amt section.
          AND ((--Non Prepay items use regular date logic
                  get_prepay(LASL.PAYMENT_SCHEDULE_ID,'N','Y') IS NULL
-         AND (greatest(trunc(LASL.due_dte),nvl(trunc(trx.creation_date),trunc(LASL.due_dte))) + v_due_date_adjustment)
+         AND greatest(trunc(LASL.due_dte),nvl(trunc(trx.creation_date),trunc(LASL.due_dte))) 
                      BETWEEN TRUNC(v_last_stmt_date_global) AND v_statement_date_global)
                 OR 
                 (-- Prepay items should be consider due on first move into F3 section
@@ -3214,7 +3192,7 @@ FUNCTION get_invoice_xml
                  WHERE STMT_HDR_ID = v_stmt_header_id
                    AND REC_TYPE_CDE = 'F3'
                    AND OUTSTND_AMT >= 0
-                   AND (DUE_DTE + v_due_date_adjustment) <= v_statement_date_global
+                   AND DUE_DTE <= v_statement_date_global
                 ) dbt,
                (SELECT nvl(SUM(nvl(LASL2.OUTSTND_AMT, 0)), 0) CRE_AMT
                   FROM LWX_AR_STMT_LINES LASL2
@@ -3255,7 +3233,7 @@ FUNCTION get_invoice_xml
          WHERE STMT_HDR_ID = v_stmt_header_id
            AND REC_TYPE_CDE = 'F3'
            AND TOTAL_DUE_AMT >= 0
-           AND (DUE_DTE + v_due_date_adjustment) > v_statement_date_global;
+           AND DUE_DTE > v_statement_date_global;
 
         log('d','No Due Amount ' ||
                   to_char(v_no_due_amt, '999,999,999,990.00'));
@@ -3697,7 +3675,7 @@ FUNCTION get_invoice_xml
               ' Mkt Message4 Name ' || v_mkt_msg4_nme);
 
     -- Get the current statement indicator
-    IF (nvl(trunc(v_due_dte), trunc(v_trans_dte)) + v_due_date_adjustment) <= v_statement_date_global THEN
+    IF nvl(trunc(v_due_dte), trunc(v_trans_dte)) <= v_statement_date_global THEN
       v_incl_cur_stmt_ind := 'Y';
     ELSE
       v_incl_cur_stmt_ind := 'N';
@@ -3912,9 +3890,6 @@ FUNCTION get_invoice_xml
     ---                                         Modified to call get_line_amounts instead of duplicated 
     ---                                           code in F2 and F3
     ---                                         Put Doc Type Name in open item cursor instead of requerying
-    ---  2020-02-18   Rich Stewart             OF-3392 Changes use of due dates:
-    ---                                        The v_due_date_adjustment package-level global is used
-    ---                                        to "delay" the due-dates herein.
     --- ***************************************************************************************************************
 
     -- Local varibles declaration
@@ -4015,7 +3990,7 @@ FUNCTION get_invoice_xml
     -- Get the current statement indicator
     v_process_stage := 'Get the Current Statement Indicator';
 
-    IF (nvl(trunc(v_due_dte), trunc(v_trans_dte)) + v_due_date_adjustment) <= v_statement_date_global THEN
+    IF nvl(trunc(v_due_dte), trunc(v_trans_dte)) <= v_statement_date_global THEN
       v_incl_cur_stmt_ind := 'Y';
     ELSE
       v_incl_cur_stmt_ind := 'N';
