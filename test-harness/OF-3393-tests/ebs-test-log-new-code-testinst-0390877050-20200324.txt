@@ -1,0 +1,137 @@
++---------------------------------------------------------------------------+
+LifeWay Custom Extensions: Version : UNKNOWN
+
+Copyright (c) 1979, 1999, Oracle Corporation. All rights reserved.
+
+LWXARCSGP module: LWX AR Consolidated Statement Generation Program
++---------------------------------------------------------------------------+
+
+Current system time is 24-MAR-2020 14:51:49
+
++---------------------------------------------------------------------------+
+
+**Starts**24-MAR-2020 14:51:50
+**Ends**24-MAR-2020 14:51:52
++---------------------------------------------------------------------------+
+Start of log messages from FND_FILE
++---------------------------------------------------------------------------+
+Start processing Statement with ORG_ID: 102
+Processing Customer Number 0390877050
+Processing Customer Email finanzas.sbpr@gmail.com
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Inside v_customer_Cur: customer id: 98989 SITE_USE_ID:  customer name: Sociedad Biblica Puerto Rico
+Determine the Statement As of Date.  The Statement As of Date passed: 2020/03/24 00:00:00 and v_customer_statement_cycle_id: 1006 for sysdate: 03/24/2020
+Statement Date Determined: 03/24/2020 23:59:59
+Get the Last Statement Date for the Current Customer ID: 98989
+Last Statement Date Determined: 18-NOV-2019
+Open Balance for the customer:          4,222.19
+Days since last statement for customer:    127
+*** Warning: missing geocode data
+CUST_ACCT_SITE_ID 148309
+Customer Consolidated Statement flag: N
+Statement Summary Message1 
+Statement Summary Message2 
+Sales Channel Code CE
+Logo Code RC
+CUST_ACCT_SITE_ID 148309
+Cust_Email_Adr finanzas.sbpr@gmail.com
+Collector ID 2006 Collectors Telephone Number (615) 251-2257 Collectors Email Address Sorgalin.Acevedo@Lifeway.com Collectors Fax Number (615) 251-5737
+v_stmt_header_id: 8648106
+*** Inside v_openitem_cur loop for customer id: 98989 for ps schedule id: 36843049 Class: INV Customer Trx ID 27199482 Sales Channel code: CE Type: INV
+Start of Lwx_Ar_Build_F3_Type_Rec Procedure
+Inside Lwx_Ar_Build_F3_Type_Rec Procedure  Record Type Code F3 Customer Transaction ID 27199482 Cash Receipt ID  Payment Schedule ID 36843049 Transaction Date 28-AUG-19 Transaction Number 14942995_105153088(1 Sales Channel Name CE Customer Reference Name 1011737 Document Reference Name 14942995_105153088(1 Original Amount 3478.32 Due Date 26-DEC-19 Outstanding Amount 3478.32 Mkt Message1 Name  Mkt Message2 Name  Mkt Message3 Name  Mkt Message4 Name 
+Sales Channel Code CE
+Logo Code CE
+Document Type Name Invoice
+Checking due_date and statement date for future payment ind. with due date: 26-DEC-2019 00:00:00 and v_statement_date_global: 24-MAR-2020 23:59:59
+Outstanding Amount            3,478.32
+Sub Total Amount            3,478.32
+Ship Handling Amount                0.00
+Tax Amount                0.00
+Payment Used Amount                0.00
+Total Due Amout:            3,478.32
+End of Lwx_Ar_Build_F3_Type_Rec Procedure
+Customer Trx ID: 27199482 Term Count 1
+Previous Statment Run Count 3 for customer_trx_id: 27199482
+End of v_openitem_cur loop for customer id: 98989
+*** Inside v_openitem_cur loop for customer id: 98989 for ps schedule id: 37244471 Class: INV Customer Trx ID 27493308 Sales Channel code: CE Type: INV
+Start of Lwx_Ar_Build_F3_Type_Rec Procedure
+Inside Lwx_Ar_Build_F3_Type_Rec Procedure  Record Type Code F3 Customer Transaction ID 27493308 Cash Receipt ID  Payment Schedule ID 37244471 Transaction Date 11-OCT-19 Transaction Number 15118132_105900877(1 Sales Channel Name CE Customer Reference Name 1011768 Document Reference Name 15118132_105900877(1 Original Amount 743.87 Due Date 09-JAN-20 Outstanding Amount 743.87 Mkt Message1 Name  Mkt Message2 Name  Mkt Message3 Name  Mkt Message4 Name 
+Sales Channel Code CE
+Logo Code CE
+Document Type Name Invoice
+Checking due_date and statement date for future payment ind. with due date: 09-JAN-2020 00:00:00 and v_statement_date_global: 24-MAR-2020 23:59:59
+Outstanding Amount              743.87
+Sub Total Amount              583.88
+Ship Handling Amount              159.99
+Tax Amount                0.00
+Payment Used Amount                0.00
+Total Due Amout:              743.87
+End of Lwx_Ar_Build_F3_Type_Rec Procedure
+Customer Trx ID: 27493308 Term Count 1
+Previous Statment Run Count 2 for customer_trx_id: 27493308
+End of v_openitem_cur loop for customer id: 98989
+Total F2 Type Records 0
+Total F3 Type Records 2
+Total F4 Type Records 2
+Over due Amount                0.00
+Transaction Due Amount            4,222.19
+Payment Amount            4,222.19
+Start of Lwx_Stmt_Scanned_Line_Logic Procedure
+Start of Lwx_Get_Check_Digit Procedure
+v_build_string 111110390877050000422219000000000
+v_build_string length 33
+ v_process_stage Extract Odd and Even Digits
+Check Digit 5
+End of Lwx_Get_Check_Digit Procedure
+Scanned Line 1111103908770500004222190000000005
+Scanned Line Length 34
+End of Lwx_Stmt_Scanned_Line_Logic Procedure
+No Due Amount                0.00
+Balance Amount            4,222.19
+Update the Statement Header Level Informations
+Update the LWX_AR_STMT_HEADERS table header id 8648106 PPD Page Count 0 Detail Page Count 1 Invoice Page Count 0 Total Page Count 2 Over Due Amount 0 Due Amount 4222.19 To Payment Amount 4222.19 Not Due Amount 0 Balance Amount 4222.19
+End of v_customer_Cur: for customer id: 98989
+End Customer 0390877050
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Start of Lwx_Data_File_Phase Procedure
+Start of F1 Type Header Record Loop...
+Inside v_ar_stmt_hdr_f1_cur: Concurrent Request id: 133894650 Statement Header ID: 8648106
+Building F1 Type Record Line #1 Field Values PR0390877050F1                10000000|0000000|0000001|0000000|0000002|RC|03-24-20|0390877050|Sociedad Biblica Puerto Rico|finanzas.sbpr@gmail.com|
+Calling Format_Address for F1 Type 2 and 3 address fields.PR0390877050F1                20000000|Urb Puerto Nuevo, Ave Andalucia 627|San Juan PR 00920-5309|
+Building F1 Type Record Line #3 Field Values PR0390877050F1                30000000||||
+Building F1 Type Record Line #4 Field Values PR0390877050F1                40000000|(615) 251-2257|0.00|4222.19|4222.19|04-18-20|0.00|4222.19|
+Building F1 Type Record Line #5 Field Values PR0390877050F1                50000000|||
+Building F1 Type Record Line #6 Field Values PR0390877050F1                60000000|1111103908770500004222190000000005|
+Building F1 Type Record Line #7 Field Values PR0390877050F1                70000000|(615) 251-5737|Sorgalin.Acevedo@Lifeway.com|N|Y|N|N|
+F3 Record total page2
+Calling Format_Address for F3 Type 1 Field 7 - 10.PR0390877050F3                10000000|1|2|RC|03-24-20|0390877050|Sociedad Biblica Puerto Rico|Urb Puerto Nuevo, Ave Andalucia 627|San Juan PR 00920-5309||||
+Begin F3 Type Record Cursor Loop.
+Inside v_ar_stmt_lines_f3_cur: Statement Header id: 8648106
+Building 38 Character Sort Key for F3 Type Record Line #2.
+Data_File_Phase: Checking batch source for customer_trx_id: 27199482
+Data_File_Phase: Batch source name retrieved for customer_trx_id: 27199482 is: Order Management
+Retrieve sales channel description using sales channel code: CEPR0390877050F3                20000001|N|08-28-19|Invoice|LifeWay Espanol|1011737|||12-26-19|14942995_105153088(1|3478.32|3478.32|
+Inside v_ar_stmt_lines_f3_cur: Statement Header id: 8648106
+Building 38 Character Sort Key for F3 Type Record Line #2.
+Data_File_Phase: Checking batch source for customer_trx_id: 27493308
+Data_File_Phase: Batch source name retrieved for customer_trx_id: 27493308 is: Order Management
+Retrieve sales channel description using sales channel code: CEPR0390877050F3                20000002|N|10-11-19|Invoice|LifeWay Espanol|1011768|||01-09-20|15118132_105900877(1|743.87|743.87|
+Begin F4 Type Record Cursor Loop.
++---------------------------------------------------------------------------+
+End of log messages from FND_FILE
++---------------------------------------------------------------------------+
+
+
++---------------------------------------------------------------------------+
+No completion options were requested.
+
+Output file size: 
+1015
+
++---------------------------------------------------------------------------+
+Concurrent request completed successfully
+Current system time is 24-MAR-2020 14:51:52
+
++---------------------------------------------------------------------------+
+

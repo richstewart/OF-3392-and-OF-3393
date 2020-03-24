@@ -1,0 +1,336 @@
++---------------------------------------------------------------------------+
+LifeWay Custom Extensions: Version : UNKNOWN
+
+Copyright (c) 1979, 1999, Oracle Corporation. All rights reserved.
+
+LWXARCSGP module: LWX AR Consolidated Statement Generation Program
++---------------------------------------------------------------------------+
+
+Current system time is 24-MAR-2020 13:34:43
+
++---------------------------------------------------------------------------+
+
+**Starts**24-MAR-2020 13:34:44
+**Ends**24-MAR-2020 13:34:49
++---------------------------------------------------------------------------+
+Start of log messages from FND_FILE
++---------------------------------------------------------------------------+
+Start processing Statement with ORG_ID: 102
+Processing Customer Number 2002527440
+Processing Customer Email None
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Inside v_customer_Cur: customer id: 22338940 SITE_USE_ID:  customer name: Judy Stephens
+Determine the Statement As of Date.  The Statement As of Date passed: 2020/03/24 00:00:00 and v_customer_statement_cycle_id: 3000 for sysdate: 03/24/2020
+Statement Date Determined: 03/24/2020 23:59:59
+Get the Last Statement Date for the Current Customer ID: 22338940
+Last Statement Date Determined: 12-NOV-2019
+Open Balance for the customer:              6.78
+Days since last statement for customer:    133
+CUST_ACCT_SITE_ID 4659669
+Customer Consolidated Statement flag: Y
+Statement Summary Message1 
+Statement Summary Message2 
+Sales Channel Code CR
+Logo Code RC
+CUST_ACCT_SITE_ID 4659669
+Cust_Email_Adr NULL
+Collector ID 2016 Collectors Telephone Number 1-800-453-9775 Collectors Email Address CustomerAccounts@LifeWay.com Collectors Fax Number (615) 251-3914
+v_stmt_header_id: 8647106
+*** Inside v_openitem_cur loop for customer id: 22338940 for ps schedule id: 37512796 Class: INV Customer Trx ID 27677326 Sales Channel code: CR Type: INV
+Start of Lwx_Ar_Build_F3_Type_Rec Procedure
+Inside Lwx_Ar_Build_F3_Type_Rec Procedure  Record Type Code F3 Customer Transaction ID 27677326 Cash Receipt ID  Payment Schedule ID 37512796 Transaction Date 14-NOV-19 Transaction Number 28489067(15221016) Sales Channel Name CR Customer Reference Name  Document Reference Name 28489067(15221016) Original Amount 67.72 Due Date 14-NOV-19 Outstanding Amount 6.78 Mkt Message1 Name  Mkt Message2 Name  Mkt Message3 Name  Mkt Message4 Name 
+Sales Channel Code CR
+Logo Code RC
+Document Type Name Invoice
+Checking due_date and statement date for future payment ind. with due date: 14-NOV-2019 00:00:00 and v_statement_date_global: 24-MAR-2020 23:59:59
+Outstanding Amount                6.78
+Sub Total Amount               57.24
+Ship Handling Amount               10.00
+Tax Amount                0.48
+Payment Used Amount               60.94
+Total Due Amout:                6.78
+End of Lwx_Ar_Build_F3_Type_Rec Procedure
+Customer Trx ID: 27677326 Term Count 1
+Previous Statment Run Count 0 for customer_trx_id: 27677326
+Call to Standard Procedure to Setup the Printing Data for customer_trx_id: 27677326
+Call Procedure to Insert F4 Type Records
+Start of Lwx_Ar_Build_F4_Type_Rec Procedure with customer_trx_id: 27677326
+Inside Lwx_Ar_Build_F4_Type_Rec Procedure  Record Type Code F4 Customer Transaction ID 27677326 Cash Receipt ID  Payment Schedule ID 37512796 Transaction Date 14-NOV-19 Transaction Number 28489067(15221016) Sales Channel Name CR Customer Reference Name  Document Reference Name 28489067(15221016) Mkt Message1 Name  Mkt Message2 Name  Mkt Message3 Name  Mkt Message4 Name 
+Current statement indicator v_incl_cur_stmt_ind: Y
+Sales Channel Code CR
+Logo Code RC
+Document Title Name Invoice
+Bill To Customer name and number: Judy Stephens 2002527440
+Bill to Address 1 Beach Club Dr Unit 701Miramar BeachFL32550United States
+Ship To Customer name and number: Judy Stephens 2002527440
+Ship to Address 1 Beach Club Dr Unit 701Miramar BeachFL32550United States
+Outstanding Amount            6.78
+Term Message Due Immediately
+Entering Get_Bill_To_Contact_Info with bill-to customer id: 22338940 and p_customer_trx_id: 27677326
+Ordered Date 11/12/2019 Shipping method code 000001_Route_P_LWXLSTCST Customer TRX ID 27677326
+Shipping Method Name Route-Parcel-Least Cost
+F4 Retrieved interface header context using customer_trx_id:27677326: ORDER ENTRY
+Sub Total Amount 57.24 Customer_Trx_ID 27677326
+Ship Handling Amount 10 Customer_Trx_ID 27677326
+Tax .48 Customer_Trx_ID 27677326
+Payment Used Amt 60.94 Customer ID 22338940 Customer_Trx_ID 27677326
+Total Due Amount:                6.78
+Insert F4 Type Records into LWX_AR_STMT_LINES Table
+End of Lwx_Ar_Build_F4_Type_Rec Procedure
+Batch Source Name Order Management
+****** Inside v_trx_line_dtl_cur: customer trx id: 27677326 CUSTOMER_TRX_LINE_ID: 328711727 QUANTITY_ORDERED: 1 QUANTITY_INVOICED: 1 INVENTORY_ITEM_ID: 18055264 UNIT_SELLING_PRICE: 17.49 UNIT_STANDARD_PRICE: 24.99 EXTENDED_AMOUNT: 17.49 DESCRIPTION: NKJV DAILY DEVOTIONAL BIBLE FOR WOMEN, TP
+Call Procedure to Insert into Line Details for the current line details for customer trx id: 27677326 and customer_trx_line_id: 328711727
+Start of Lwx_Ar_Build_Line_Details Procedure
+Statement Line Detail ID 114955121Statement Line ID 41241005
+Customer Trx Line ID 328711727Inventory item id 18055264Ordered Quantity 1Invoiced Quantity 1DESCRIPTION NKJV DAILY DEVOTIONAL BIBLE FOR WOMEN, TPUnit Selling Price           24.99Unit Standard Price           30.01Extended Amount           17.49
+Inventory Item Number 005810022.
+Getting the total tax amount for customer_trx_line_id: 328711727
+Total tax amount for the line:            0.00
+ Cross Reference for the Inventory Item 9781535935227
+Insert Memo Lines with Inventory Item and Cross Reference Details into Line Details Table
+End of Lwx_Ar_Build_Line_Details Procedure
+Inventory Item ID: 18055264 Inventory Item Status Code GOP
+End of v_trx_line_dtl_cur: customer trx id: 27677326
+****** Inside v_trx_line_dtl_cur: customer trx id: 27677326 CUSTOMER_TRX_LINE_ID: 328711728 QUANTITY_ORDERED:  QUANTITY_INVOICED: 1 INVENTORY_ITEM_ID: 1001 UNIT_SELLING_PRICE: 2.26 UNIT_STANDARD_PRICE: 2.26 EXTENDED_AMOUNT: 2.26 DESCRIPTION: Shipping and Processing Charges
+Call Procedure to Insert into Line Details for the current line details for customer trx id: 27677326 and customer_trx_line_id: 328711728
+Start of Lwx_Ar_Build_Line_Details Procedure
+Statement Line Detail ID 114955122Statement Line ID 41241005
+Customer Trx Line ID 328711728Inventory item id 1001Ordered Quantity Invoiced Quantity 1DESCRIPTION Shipping and Processing ChargesUnit Selling Price            2.26Unit Standard Price            0.00Extended Amount            2.26
+Inventory Item Number SHIPPING.
+Getting the total tax amount for customer_trx_line_id: 328711728
+Total tax amount for the line:            0.16
+ Cross Reference for the Inventory Item 
+Insert Memo Lines with Inventory Item and Cross Reference Details into Line Details Table
+End of Lwx_Ar_Build_Line_Details Procedure
+Inventory Item ID: 1001 Inventory Item Status Code AVL
+End of v_trx_line_dtl_cur: customer trx id: 27677326
+****** Inside v_trx_line_dtl_cur: customer trx id: 27677326 CUSTOMER_TRX_LINE_ID: 328711729 QUANTITY_ORDERED: 1 QUANTITY_INVOICED: 1 INVENTORY_ITEM_ID: 18617269 UNIT_SELLING_PRICE: 20.99 UNIT_STANDARD_PRICE: 29.99 EXTENDED_AMOUNT: 20.99 DESCRIPTION: CSB KIDS BIBLE, LION LT
+Call Procedure to Insert into Line Details for the current line details for customer trx id: 27677326 and customer_trx_line_id: 328711729
+Start of Lwx_Ar_Build_Line_Details Procedure
+Statement Line Detail ID 114955123Statement Line ID 41241005
+Customer Trx Line ID 328711729Inventory item id 18617269Ordered Quantity 1Invoiced Quantity 1DESCRIPTION CSB KIDS BIBLE, LION LTUnit Selling Price           29.99Unit Standard Price           30.01Extended Amount           20.99
+Inventory Item Number 005816963.
+Getting the total tax amount for customer_trx_line_id: 328711729
+Total tax amount for the line:            0.00
+ Cross Reference for the Inventory Item 9781535965774
+Insert Memo Lines with Inventory Item and Cross Reference Details into Line Details Table
+End of Lwx_Ar_Build_Line_Details Procedure
+Inventory Item ID: 18617269 Inventory Item Status Code AVL
+End of v_trx_line_dtl_cur: customer trx id: 27677326
+****** Inside v_trx_line_dtl_cur: customer trx id: 27677326 CUSTOMER_TRX_LINE_ID: 328711730 QUANTITY_ORDERED:  QUANTITY_INVOICED: 1 INVENTORY_ITEM_ID: 1001 UNIT_SELLING_PRICE: 2.72 UNIT_STANDARD_PRICE: 2.72 EXTENDED_AMOUNT: 2.72 DESCRIPTION: Shipping and Processing Charges
+Call Procedure to Insert into Line Details for the current line details for customer trx id: 27677326 and customer_trx_line_id: 328711730
+Start of Lwx_Ar_Build_Line_Details Procedure
+Statement Line Detail ID 114955124Statement Line ID 41241005
+Customer Trx Line ID 328711730Inventory item id 1001Ordered Quantity Invoiced Quantity 1DESCRIPTION Shipping and Processing ChargesUnit Selling Price            2.72Unit Standard Price            0.00Extended Amount            2.72
+Inventory Item Number SHIPPING.
+Getting the total tax amount for customer_trx_line_id: 328711730
+Total tax amount for the line:            0.19
+ Cross Reference for the Inventory Item 
+Insert Memo Lines with Inventory Item and Cross Reference Details into Line Details Table
+End of Lwx_Ar_Build_Line_Details Procedure
+Inventory Item ID: 1001 Inventory Item Status Code AVL
+End of v_trx_line_dtl_cur: customer trx id: 27677326
+****** Inside v_trx_line_dtl_cur: customer trx id: 27677326 CUSTOMER_TRX_LINE_ID: 328711731 QUANTITY_ORDERED: 1 QUANTITY_INVOICED: 1 INVENTORY_ITEM_ID: 17584288 UNIT_SELLING_PRICE: 11.99 UNIT_STANDARD_PRICE: 19.99 EXTENDED_AMOUNT: 11.99 DESCRIPTION: AWAKEN, DELUXE EDITION
+Call Procedure to Insert into Line Details for the current line details for customer trx id: 27677326 and customer_trx_line_id: 328711731
+Start of Lwx_Ar_Build_Line_Details Procedure
+Statement Line Detail ID 114955125Statement Line ID 41241005
+Customer Trx Line ID 328711731Inventory item id 17584288Ordered Quantity 1Invoiced Quantity 1DESCRIPTION AWAKEN, DELUXE EDITIONUnit Selling Price           19.99Unit Standard Price           40.02Extended Amount           11.99
+Inventory Item Number 005802601.
+Getting the total tax amount for customer_trx_line_id: 328711731
+Total tax amount for the line:            0.00
+ Cross Reference for the Inventory Item 9781462797806
+Insert Memo Lines with Inventory Item and Cross Reference Details into Line Details Table
+End of Lwx_Ar_Build_Line_Details Procedure
+Inventory Item ID: 17584288 Inventory Item Status Code AVL
+End of v_trx_line_dtl_cur: customer trx id: 27677326
+****** Inside v_trx_line_dtl_cur: customer trx id: 27677326 CUSTOMER_TRX_LINE_ID: 328711754 QUANTITY_ORDERED:  QUANTITY_INVOICED: 1 INVENTORY_ITEM_ID: 1001 UNIT_SELLING_PRICE: 1.55 UNIT_STANDARD_PRICE: 1.55 EXTENDED_AMOUNT: 1.55 DESCRIPTION: Shipping and Processing Charges
+Call Procedure to Insert into Line Details for the current line details for customer trx id: 27677326 and customer_trx_line_id: 328711754
+Start of Lwx_Ar_Build_Line_Details Procedure
+Statement Line Detail ID 114955126Statement Line ID 41241005
+Customer Trx Line ID 328711754Inventory item id 1001Ordered Quantity Invoiced Quantity 1DESCRIPTION Shipping and Processing ChargesUnit Selling Price            1.55Unit Standard Price            0.00Extended Amount            1.55
+Inventory Item Number SHIPPING.
+Getting the total tax amount for customer_trx_line_id: 328711754
+Total tax amount for the line:            0.11
+ Cross Reference for the Inventory Item 
+Insert Memo Lines with Inventory Item and Cross Reference Details into Line Details Table
+End of Lwx_Ar_Build_Line_Details Procedure
+Inventory Item ID: 1001 Inventory Item Status Code AVL
+End of v_trx_line_dtl_cur: customer trx id: 27677326
+****** Inside v_trx_line_dtl_cur: customer trx id: 27677326 CUSTOMER_TRX_LINE_ID: 328711755 QUANTITY_ORDERED: 1 QUANTITY_INVOICED: 1 INVENTORY_ITEM_ID: 18346318 UNIT_SELLING_PRICE: 9.99 UNIT_STANDARD_PRICE: 19.99 EXTENDED_AMOUNT: 9.99 DESCRIPTION: INSANITY OF SACRIFICE, THE
+Call Procedure to Insert into Line Details for the current line details for customer trx id: 27677326 and customer_trx_line_id: 328711755
+Start of Lwx_Ar_Build_Line_Details Procedure
+Statement Line Detail ID 114955127Statement Line ID 41241005
+Customer Trx Line ID 328711755Inventory item id 18346318Ordered Quantity 1Invoiced Quantity 1DESCRIPTION INSANITY OF SACRIFICE, THEUnit Selling Price           19.99Unit Standard Price           50.03Extended Amount            9.99
+Inventory Item Number 005813798.
+Getting the total tax amount for customer_trx_line_id: 328711755
+Total tax amount for the line:            0.00
+ Cross Reference for the Inventory Item 9781535951180
+Insert Memo Lines with Inventory Item and Cross Reference Details into Line Details Table
+End of Lwx_Ar_Build_Line_Details Procedure
+Inventory Item ID: 18346318 Inventory Item Status Code AVL
+End of v_trx_line_dtl_cur: customer trx id: 27677326
+****** Inside v_trx_line_dtl_cur: customer trx id: 27677326 CUSTOMER_TRX_LINE_ID: 328711756 QUANTITY_ORDERED:  QUANTITY_INVOICED: 1 INVENTORY_ITEM_ID: 1001 UNIT_SELLING_PRICE: 1.29 UNIT_STANDARD_PRICE: 1.29 EXTENDED_AMOUNT: 1.29 DESCRIPTION: Shipping and Processing Charges
+Call Procedure to Insert into Line Details for the current line details for customer trx id: 27677326 and customer_trx_line_id: 328711756
+Start of Lwx_Ar_Build_Line_Details Procedure
+Statement Line Detail ID 114955128Statement Line ID 41241005
+Customer Trx Line ID 328711756Inventory item id 1001Ordered Quantity Invoiced Quantity 1DESCRIPTION Shipping and Processing ChargesUnit Selling Price            1.29Unit Standard Price            0.00Extended Amount            1.29
+Inventory Item Number SHIPPING.
+Getting the total tax amount for customer_trx_line_id: 328711756
+Total tax amount for the line:            0.09
+ Cross Reference for the Inventory Item 
+Insert Memo Lines with Inventory Item and Cross Reference Details into Line Details Table
+End of Lwx_Ar_Build_Line_Details Procedure
+Inventory Item ID: 1001 Inventory Item Status Code AVL
+End of v_trx_line_dtl_cur: customer trx id: 27677326
+****** Inside v_trx_line_dtl_cur: customer trx id: 27677326 CUSTOMER_TRX_LINE_ID: 328711757 QUANTITY_ORDERED: 1 QUANTITY_INVOICED: 1 INVENTORY_ITEM_ID: 18835569 UNIT_SELLING_PRICE: 8.39 UNIT_STANDARD_PRICE: 11.99 EXTENDED_AMOUNT: 8.39 DESCRIPTION: PRINCESS PRAYER
+Call Procedure to Insert into Line Details for the current line details for customer trx id: 27677326 and customer_trx_line_id: 328711757
+Start of Lwx_Ar_Build_Line_Details Procedure
+Statement Line Detail ID 114955129Statement Line ID 41241005
+Customer Trx Line ID 328711757Inventory item id 18835569Ordered Quantity 1Invoiced Quantity 1DESCRIPTION PRINCESS PRAYERUnit Selling Price           11.99Unit Standard Price           30.03Extended Amount            8.39
+Inventory Item Number 008008810.
+Getting the total tax amount for customer_trx_line_id: 328711757
+Total tax amount for the line:            0.59
+ Cross Reference for the Inventory Item 9781589979888
+Insert Memo Lines with Inventory Item and Cross Reference Details into Line Details Table
+End of Lwx_Ar_Build_Line_Details Procedure
+Inventory Item ID: 18835569 Inventory Item Status Code JIT
+End of v_trx_line_dtl_cur: customer trx id: 27677326
+****** Inside v_trx_line_dtl_cur: customer trx id: 27677326 CUSTOMER_TRX_LINE_ID: 328711758 QUANTITY_ORDERED:  QUANTITY_INVOICED: 1 INVENTORY_ITEM_ID: 1001 UNIT_SELLING_PRICE: 1.09 UNIT_STANDARD_PRICE: 1.09 EXTENDED_AMOUNT: 1.09 DESCRIPTION: Shipping and Processing Charges
+Call Procedure to Insert into Line Details for the current line details for customer trx id: 27677326 and customer_trx_line_id: 328711758
+Start of Lwx_Ar_Build_Line_Details Procedure
+Statement Line Detail ID 114955130Statement Line ID 41241005
+Customer Trx Line ID 328711758Inventory item id 1001Ordered Quantity Invoiced Quantity 1DESCRIPTION Shipping and Processing ChargesUnit Selling Price            1.09Unit Standard Price            0.00Extended Amount            1.09
+Inventory Item Number SHIPPING.
+Getting the total tax amount for customer_trx_line_id: 328711758
+Total tax amount for the line:            0.08
+ Cross Reference for the Inventory Item 
+Insert Memo Lines with Inventory Item and Cross Reference Details into Line Details Table
+End of Lwx_Ar_Build_Line_Details Procedure
+Inventory Item ID: 1001 Inventory Item Status Code AVL
+End of v_trx_line_dtl_cur: customer trx id: 27677326
+****** Inside v_trx_line_dtl_cur: customer trx id: 27677326 CUSTOMER_TRX_LINE_ID: 328711759 QUANTITY_ORDERED: 1 QUANTITY_INVOICED: 1 INVENTORY_ITEM_ID: 442338 UNIT_SELLING_PRICE: -20 UNIT_STANDARD_PRICE: 0 EXTENDED_AMOUNT: -20 DESCRIPTION: RETAIL COUPON
+Call Procedure to Insert into Line Details for the current line details for customer trx id: 27677326 and customer_trx_line_id: 328711759
+Start of Lwx_Ar_Build_Line_Details Procedure
+Statement Line Detail ID 114955131Statement Line ID 41241005
+Customer Trx Line ID 328711759Inventory item id 442338Ordered Quantity 1Invoiced Quantity 1DESCRIPTION RETAIL COUPONUnit Selling Price            0.00Unit Standard Price            0.00Extended Amount          -20.00
+Inventory Item Number 005077202.
+Getting the total tax amount for customer_trx_line_id: 328711759
+Total tax amount for the line:           -1.40
+ Cross Reference for the Inventory Item LWSCPN
+Insert Memo Lines with Inventory Item and Cross Reference Details into Line Details Table
+End of Lwx_Ar_Build_Line_Details Procedure
+Inventory Item ID: 442338 Inventory Item Status Code AVL
+End of v_trx_line_dtl_cur: customer trx id: 27677326
+****** Inside v_trx_line_dtl_cur: customer trx id: 27677326 CUSTOMER_TRX_LINE_ID: 328711760 QUANTITY_ORDERED: 1 QUANTITY_INVOICED: 1 INVENTORY_ITEM_ID: 18835503 UNIT_SELLING_PRICE: 8.39 UNIT_STANDARD_PRICE: 11.99 EXTENDED_AMOUNT: 8.39 DESCRIPTION: HEROS PRAYER
+Call Procedure to Insert into Line Details for the current line details for customer trx id: 27677326 and customer_trx_line_id: 328711760
+Start of Lwx_Ar_Build_Line_Details Procedure
+Statement Line Detail ID 114955132Statement Line ID 41241005
+Customer Trx Line ID 328711760Inventory item id 18835503Ordered Quantity 1Invoiced Quantity 1DESCRIPTION HEROS PRAYERUnit Selling Price           11.99Unit Standard Price           30.03Extended Amount            8.39
+Inventory Item Number 008008808.
+Getting the total tax amount for customer_trx_line_id: 328711760
+Total tax amount for the line:            0.58
+ Cross Reference for the Inventory Item 9781589979857
+Insert Memo Lines with Inventory Item and Cross Reference Details into Line Details Table
+End of Lwx_Ar_Build_Line_Details Procedure
+Inventory Item ID: 18835503 Inventory Item Status Code JIT
+End of v_trx_line_dtl_cur: customer trx id: 27677326
+****** Inside v_trx_line_dtl_cur: customer trx id: 27677326 CUSTOMER_TRX_LINE_ID: 328711761 QUANTITY_ORDERED:  QUANTITY_INVOICED: 1 INVENTORY_ITEM_ID: 1001 UNIT_SELLING_PRICE: 1.09 UNIT_STANDARD_PRICE: 1.09 EXTENDED_AMOUNT: 1.09 DESCRIPTION: Shipping and Processing Charges
+Call Procedure to Insert into Line Details for the current line details for customer trx id: 27677326 and customer_trx_line_id: 328711761
+Start of Lwx_Ar_Build_Line_Details Procedure
+Statement Line Detail ID 114955133Statement Line ID 41241005
+Customer Trx Line ID 328711761Inventory item id 1001Ordered Quantity Invoiced Quantity 1DESCRIPTION Shipping and Processing ChargesUnit Selling Price            1.09Unit Standard Price            0.00Extended Amount            1.09
+Inventory Item Number SHIPPING.
+Getting the total tax amount for customer_trx_line_id: 328711761
+Total tax amount for the line:            0.08
+ Cross Reference for the Inventory Item 
+Insert Memo Lines with Inventory Item and Cross Reference Details into Line Details Table
+End of Lwx_Ar_Build_Line_Details Procedure
+Inventory Item ID: 1001 Inventory Item Status Code AVL
+End of v_trx_line_dtl_cur: customer trx id: 27677326
+Statement Header ID 8647106 Statement Line ID 41241005
+Page Number 7
+Update Statement Lines with Page Count 1 and Line Count 7 with statement line id: 41241005
+End of v_openitem_cur loop for customer id: 22338940
+Total F2 Type Records 0
+Total F3 Type Records 1
+Total F4 Type Records 1
+Over due Amount                0.00
+Transaction Due Amount                0.00
+Payment Amount                6.78
+Start of Lwx_Stmt_Scanned_Line_Logic Procedure
+Start of Lwx_Get_Check_Digit Procedure
+v_build_string 111112002527440000000678000000000
+v_build_string length 33
+ v_process_stage Extract Odd and Even Digits
+Check Digit 9
+End of Lwx_Get_Check_Digit Procedure
+Scanned Line 1111120025274400000006780000000009
+Scanned Line Length 34
+End of Lwx_Stmt_Scanned_Line_Logic Procedure
+No Due Amount                0.00
+Balance Amount                6.78
+Update the Statement Header Level Informations
+Update the LWX_AR_STMT_HEADERS table header id 8647106 PPD Page Count 0 Detail Page Count 1 Invoice Page Count 1 Total Page Count 3 Over Due Amount 0 Due Amount 0 To Payment Amount 6.78 Not Due Amount 0 Balance Amount 6.78
+End of v_customer_Cur: for customer id: 22338940
+End Customer 2002527440
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Start of Lwx_Data_File_Phase Procedure
+Start of F1 Type Header Record Loop...
+Inside v_ar_stmt_hdr_f1_cur: Concurrent Request id: 133888631 Statement Header ID: 8647106
+Building F1 Type Record Line #1 Field Values FL2002527440F1                10000000|0000000|0000001|0000001|0000003|RC|03-24-20|2002527440|Judy Stephens|
+Calling Format_Address for F1 Type 2 and 3 address fields.FL2002527440F1                20000000|1 Beach Club Dr Unit 701|Miramar Beach FL 32550|
+Building F1 Type Record Line #3 Field Values FL2002527440F1                30000000||||
+Building F1 Type Record Line #4 Field Values FL2002527440F1                40000000|1-800-453-9775|0.00|0.00|6.78|04-18-20|0.00|6.78|
+Building F1 Type Record Line #5 Field Values FL2002527440F1                50000000|||
+Building F1 Type Record Line #6 Field Values FL2002527440F1                60000000|1111120025274400000006780000000009|
+Building F1 Type Record Line #7 Field Values FL2002527440F1                70000000|(615) 251-3914|CustomerAccounts@LifeWay.com|N|N|N|N|
+F3 Record total page1
+Calling Format_Address for F3 Type 1 Field 7 - 10.FL2002527440F3                10000000|1|1|RC|03-24-20|2002527440|Judy Stephens|1 Beach Club Dr Unit 701|Miramar Beach FL 32550||||
+Begin F3 Type Record Cursor Loop.
+Inside v_ar_stmt_lines_f3_cur: Statement Header id: 8647106
+Building 38 Character Sort Key for F3 Type Record Line #2.
+Data_File_Phase: Checking batch source for customer_trx_id: 27677326
+Data_File_Phase: Batch source name retrieved for customer_trx_id: 27677326 is: Order Management
+Retrieve sales channel description using sales channel code: CRFL2002527440F3                20000001|N|11-14-19|Invoice|Customer Service|||P|11-14-19|28489067(15221016)|67.72|6.78|
+Begin F4 Type Record Cursor Loop.
+Inside v_ar_stmt_hdr_f4_cur: Statement Header id: 8647106
+Building 38 Character Sort Key for F4 Type Record Line #1.
+Building F4 Type Record Line #1 Field Values FL2002527440F411-14-192848906710000000|1|7|RC|Invoice|Questions concerning this Invoice Call:1-800-458-2772|
+Calling Format_Address for F4 Type 2 Field 2 - 5.FL2002527440F411-14-192848906720000000|Judy Stephens|1 Beach Club Dr Unit 701|Miramar Beach FL 32550||||
+Building 38 Character Sort Key for F4 Type Record Line #3.
+Calling Format_Address for F4 Type 3 Field 2 - 5.FL2002527440F411-14-192848906730000000|Judy Stephens|1 Beach Club Dr Unit 701|Miramar Beach FL 32550||||
+Building F4 Type Record Line #4 Field Values FL2002527440F411-14-192848906740000000|CR|Due Immediately||||
+Building F4 Type Record Line #5 Field Values FL2002527440F411-14-192848906750000000|28489067(15221016)|2002527440||11-14-19||11-12-19|Route-Parcel-Least Cost||
+Begin F4 Type Line #6 Record Cursor Loop.
+Inside v_ar_stmt_dtl_f4_cur: Statement Line id: 41241005
+Building F4 Type Record Line #6 Field Values FL2002527440F411-14-192848906760000001||1|1|9781535935227|NKJV DAILY DEVOTIONAL BIBLE FOR WOMEN, TP|24.99|30.0120%|17.49|
+Inside v_ar_stmt_dtl_f4_cur: Statement Line id: 41241005
+Building F4 Type Record Line #6 Field Values FL2002527440F411-14-192848906760000002||1|1|9781535965774|CSB KIDS BIBLE, LION LT|29.99|30.0100%|20.99|
+Inside v_ar_stmt_dtl_f4_cur: Statement Line id: 41241005
+Building F4 Type Record Line #6 Field Values FL2002527440F411-14-192848906760000003||1|1|9781462797806|AWAKEN, DELUXE EDITION|19.99|40.0200%|11.99|
+Inside v_ar_stmt_dtl_f4_cur: Statement Line id: 41241005
+Building F4 Type Record Line #6 Field Values FL2002527440F411-14-192848906760000004||1|1|9781535951180|INSANITY OF SACRIFICE, THE|19.99|50.0250%|9.99|
+Inside v_ar_stmt_dtl_f4_cur: Statement Line id: 41241005
+Building F4 Type Record Line #6 Field Values FL2002527440F411-14-192848906760000005||1|1|9781589979888|*PRINCESS PRAYER|11.99|30.0250%|8.39|
+Inside v_ar_stmt_dtl_f4_cur: Statement Line id: 41241005
+Building F4 Type Record Line #6 Field Values FL2002527440F411-14-192848906760000006||1|1|LWSCPN|*RETAIL COUPON|0.00|0.0000%|-20.00|
+Inside v_ar_stmt_dtl_f4_cur: Statement Line id: 41241005
+Building F4 Type Record Line #6 Field Values FL2002527440F411-14-192848906760000007||1|1|9781589979857|*HEROS PRAYER|11.99|30.0250%|8.39|
+Building F4 Type Record Line #7 Field Values FL2002527440F411-14-192848906770000000|||||57.24|10.00|.48|67.72|60.94|6.78|
++---------------------------------------------------------------------------+
+End of log messages from FND_FILE
++---------------------------------------------------------------------------+
+
+
++---------------------------------------------------------------------------+
+No completion options were requested.
+
+Output file size: 
+2073
+
++---------------------------------------------------------------------------+
+Concurrent request completed successfully
+Current system time is 24-MAR-2020 13:34:49
+
++---------------------------------------------------------------------------+
+
